@@ -1,0 +1,52 @@
+# Development environment configuration that extends the base docker-compose.yml
+services:
+  # Backend API service (development mode)
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  # Frontend UI service (development mode)
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - ENVIRONMENT=development
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+  # ML service (development mode)
+  ml-service:
+    build:
+      context: .
+      dockerfile: docker/ml/Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000", "--debugger", "--reload"]
+  
+  # Development tools and utilities
+  jupyter:
+    build:
+      context: .
+      dockerfile: docker/ml/Dockerfile.jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/app
+      - ./notebooks:/notebooks
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    command: ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--notebook-dir=/notebooks"]
+    networks:
+      - codexcontinue-network

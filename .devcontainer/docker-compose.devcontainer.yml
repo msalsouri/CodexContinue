@@ -1,0 +1,42 @@
+# Extra configuration specifically for the VS Code Dev Container
+services:
+  frontend:
+    # Override command to prevent auto-start, as VS Code will handle this
+    command: sleep infinity
+    
+    # Add development tools
+    environment:
+      - PYTHONPATH=/app
+      - DEBUG=true
+    
+    # Additional volumes for development
+    volumes:
+      - ${localWorkspaceFolder}:/app:cached
+      - frontend-vscode-extensions:/home/appuser/.vscode-server/extensions
+      - frontend-vscode-insiders-extensions:/home/appuser/.vscode-server-insiders/extensions
+      
+  backend:
+    # Keep backend running without auto-starting the service
+    command: sleep infinity
+    
+    volumes:
+      - ${localWorkspaceFolder}:/app:cached
+      - backend-vscode-extensions:/home/appuser/.vscode-server/extensions
+      - backend-vscode-insiders-extensions:/home/appuser/.vscode-server-insiders/extensions
+    
+  ml-service:
+    # Keep ML service running without auto-starting the service
+    command: sleep infinity
+    
+    volumes:
+      - ${localWorkspaceFolder}:/app:cached
+      - ml-vscode-extensions:/home/appuser/.vscode-server/extensions
+      - ml-vscode-insiders-extensions:/home/appuser/.vscode-server-insiders/extensions
+
+volumes:
+  frontend-vscode-extensions:
+  frontend-vscode-insiders-extensions:
+  backend-vscode-extensions:
+  backend-vscode-insiders-extensions:
+  ml-vscode-extensions:
+  ml-vscode-insiders-extensions:

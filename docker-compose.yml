@@ -1,0 +1,95 @@
+# Base services that are extended in docker-compose.dev.yml and docker-compose.prod.yml
+services:
+  # Backend API service
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - codexcontinue-network
+
+  # Frontend UI service (Streamlit)
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - codexcontinue-network
+
+  # Redis for caching and memory storage
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - codexcontinue-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ML service with Ollama integration
+  ml-service:
+    build:
+      context: .
+      dockerfile: docker/ml/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_API_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    volumes:
+      - ./ml:/app/ml
+    networks:
+      - codexcontinue-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Ollama service for local LLM capabilities
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./ml/models/ollama:/models/ollama
+    networks:
+      - codexcontinue-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+# Networks
+networks:
+  codexcontinue-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  redis-data:
+  ollama-data:

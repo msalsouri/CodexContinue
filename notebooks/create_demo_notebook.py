@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+# simple-demo.ipynb - Basic demo notebook for JupyterLab
+
+notebook = {
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": ["# CodexContinue Jupyter Demo\n", "\n", "This is a test notebook to verify that the Jupyter container is working correctly."]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Import basic libraries\n",
+                "import numpy as np\n",
+                "import pandas as pd\n",
+                "import matplotlib.pyplot as plt\n",
+                "\n",
+                "# Enable inline plotting\n",
+                "%matplotlib inline\n",
+                "\n",
+                "print('Libraries imported successfully!')"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Create some sample data\n",
+                "x = np.linspace(0, 10, 100)\n",
+                "y = np.sin(x)\n",
+                "\n",
+                "# Create a simple plot\n",
+                "plt.figure(figsize=(10, 6))\n",
+                "plt.plot(x, y)\n",
+                "plt.title('Sine Wave')\n",
+                "plt.xlabel('x')\n",
+                "plt.ylabel('sin(x)')\n",
+                "plt.grid(True)\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": ["## Testing ML Model Integration\n", "\n", "Below is a simple example of a machine learning model using scikit-learn."]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "from sklearn.datasets import load_iris\n",
+                "from sklearn.model_selection import train_test_split\n",
+                "from sklearn.ensemble import RandomForestClassifier\n",
+                "from sklearn.metrics import accuracy_score\n",
+                "\n",
+                "# Load the iris dataset\n",
+                "iris = load_iris()\n",
+                "X = iris.data\n",
+                "y = iris.target\n",
+                "\n",
+                "# Split the data\n",
+                "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)\n",
+                "\n",
+                "# Train a model\n",
+                "model = RandomForestClassifier(n_estimators=100, random_state=42)\n",
+                "model.fit(X_train, y_train)\n",
+                "\n",
+                "# Make predictions\n",
+                "y_pred = model.predict(X_test)\n",
+                "\n",
+                "# Calculate accuracy\n",
+                "accuracy = accuracy_score(y_test, y_pred)\n",
+                "print(f'Model accuracy: {accuracy:.2f}')"
+            ]
+        }
+    ],
+    "metadata": {
+        "kernelspec": {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3"
+        },
+        "language_info": {
+            "codemirror_mode": {
+                "name": "ipython",
+                "version": 3
+            },
+            "file_extension": ".py",
+            "mimetype": "text/x-python",
+            "name": "python",
+            "nbconvert_exporter": "python",
+            "pygments_lexer": "ipython3",
+            "version": "3.10.0"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 4
+}
+
+import json
+import sys
+
+with open("demo.ipynb", "w") as f:
+    json.dump(notebook, f, indent=2)
+
+print("Created demo.ipynb")

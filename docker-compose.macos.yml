@@ -1,0 +1,22 @@
+# Modified docker-compose for macOS without GPU requirements
+services:
+  # Ollama service for local LLM capabilities - macOS version (no GPU)
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./ml/models/ollama:/models/ollama
+    networks:
+      - codexcontinue-network
+    # GPU section removed for macOS compatibility
+
+# Networks
+networks:
+  codexcontinue-network:
+    external: true
+
+# Volumes
+volumes:
+  ollama-data:
