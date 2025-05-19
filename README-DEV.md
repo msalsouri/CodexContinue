@@ -63,6 +63,7 @@ CodexContinue includes a fully-configured Jupyter notebook environment for data 
 ```
 
 Available notebooks:
+
 - `demo.ipynb` - A basic demonstration notebook
 - `data_analysis.ipynb` - A comprehensive data analysis example
 
@@ -73,19 +74,60 @@ Notebook outputs can be saved to the `notebooks/exports` directory, which is acc
 If you encounter issues with the development containers:
 
 1. Run the diagnostics script:
+
    ```bash
    ./scripts/fix-devcontainer.sh
    ```
 
 2. Clean up Docker resources:
+
    ```bash
    ./scripts/docker-cleanup.sh
    ```
 
 3. Try rebuilding the containers:
+
    ```bash
    docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
    ```
+
+## Cross-Platform Development
+
+CodexContinue supports development across different platforms:
+
+### macOS Development
+
+For macOS development without GPU support:
+
+```bash
+# Start Ollama without GPU requirements
+./scripts/start-ollama-macos.sh
+
+# Start the rest of the development environment
+./scripts/start-dev-environment.sh
+```
+
+### Windows Development with GPU
+
+For Windows systems with NVIDIA GPUs:
+
+```bash
+# Start full environment with GPU support
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+See [CROSS_PLATFORM_DEVELOPMENT.md](docs/CROSS_PLATFORM_DEVELOPMENT.md) and [WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md) for detailed instructions on setting up and developing across platforms.
+
+### Git Repository Management
+
+To set up a remote Git repository for cross-platform work:
+
+```bash
+# Configure the remote repository connection
+./scripts/setup-git-remote.sh
+```
+
+This helps you move code between macOS and Windows environments efficiently.
 
 ## Documentation
 
