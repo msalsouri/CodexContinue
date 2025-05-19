@@ -3,8 +3,8 @@
 
 set -e
 
-# Configuration
-PROJECT_DIR="/Users/msalsouri/Projects/CodexContinue"
+# Get project directory dynamically (works across platforms)
+PROJECT_DIR=$(pwd)
 OLLAMA_URL=${1:-"http://localhost:11434"}
 
 # Colors for output
