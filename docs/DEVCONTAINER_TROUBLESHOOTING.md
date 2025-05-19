@@ -7,26 +7,32 @@ This document provides troubleshooting steps for common issues with the VS Code 
 ### 1. Container fails to start or build
 
 **Symptoms:**
+
 - VS Code shows an error when trying to reopen in container
 - Build process fails with errors
 
 **Solutions:**
+
 1. Check Docker is running:
+
    ```bash
    docker info
    ```
 
 2. Clean up Docker resources:
+
    ```bash
    ./scripts/docker-cleanup.sh
    ```
 
 3. Check for permission issues:
+
    ```bash
    ls -la .devcontainer
    ```
 
 4. Try rebuilding with no cache:
+
    ```bash
    docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
    ```
@@ -34,11 +40,14 @@ This document provides troubleshooting steps for common issues with the VS Code 
 ### 2. Cannot find Python packages
 
 **Symptoms:**
+
 - Import errors in Python code
 - "Module not found" errors
 
 **Solutions:**
+
 1. Check that requirements files are being properly installed:
+
    ```bash
    docker compose exec frontend pip list
    docker compose exec backend pip list
@@ -46,6 +55,7 @@ This document provides troubleshooting steps for common issues with the VS Code 
    ```
 
 2. Manually install requirements:
+
    ```bash
    docker compose exec frontend pip install -r /app/frontend/requirements.txt
    docker compose exec backend pip install -r /app/backend/requirements.txt
@@ -55,11 +65,14 @@ This document provides troubleshooting steps for common issues with the VS Code 
 ### 3. Volume mounting issues
 
 **Symptoms:**
+
 - Changes to local files not reflected in container
 - "File not found" errors for files that exist locally
 
 **Solutions:**
+
 1. Check Docker volume mounts:
+
    ```bash
    docker compose config | grep volume -A 5
    ```
@@ -67,6 +80,7 @@ This document provides troubleshooting steps for common issues with the VS Code 
 2. Restart VS Code
 
 3. Try manually mounting the volume:
+
    ```bash
    docker compose down
    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
@@ -75,21 +89,26 @@ This document provides troubleshooting steps for common issues with the VS Code 
 ### 4. Networking issues between services
 
 **Symptoms:**
+
 - Services cannot communicate with each other
 - Connection refused errors
 
 **Solutions:**
+
 1. Check that all services are running:
+
    ```bash
    docker compose ps
    ```
 
 2. Check the network configuration:
+
    ```bash
    docker network inspect codexcontinue_codexcontinue-network
    ```
 
 3. Test connectivity between containers:
+
    ```bash
    docker compose exec frontend ping backend
    docker compose exec backend ping redis

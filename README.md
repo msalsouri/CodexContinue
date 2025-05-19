@@ -17,6 +17,7 @@ CodexContinue features built-in learning capabilities through:
 4. **Knowledge Integration**: Easy integration of new knowledge and capabilities
 
 The system uses a custom CodexContinue model built on Llama3, specifically designed for software development tasks with:
+
 - Expanded code generation capabilities
 - Technical problem-solving expertise
 - Advanced reasoning for development workflows
@@ -51,7 +52,42 @@ git clone https://github.com/yourusername/CodexContinue.git
 cd CodexContinue
 
 # Start the development environment
+./scripts/start-dev-environment.sh
+```
+
+### Platform-Specific Instructions
+
+#### macOS
+
+For macOS, use the CPU-only configuration for Ollama:
+
+```bash
+./scripts/start-ollama-macos.sh
+```
+
+#### Windows (with WSL)
+
+For Windows with WSL (recommended):
+
+```bash
+# Quick setup
+./scripts/wsl-quick-setup.sh
+
+# Or start Ollama with GPU support
+./scripts/start-ollama-wsl.sh
+```
+
+See [Windows WSL Guide](docs/WINDOWS_WSL_GUIDE.md) for detailed instructions.
+
+#### Windows (native)
+
+See [Windows Quick Start](docs/WINDOWS_QUICKSTART.md) for setup instructions.
+cd CodexContinue
+
+# Start the development environment
+
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
 ```
 
 ### Production Environment
@@ -107,21 +143,25 @@ We provide a convenience script to set up a new service with the recommended str
 CodexContinue can be customized for different domains:
 
 ### 🏥 Health Domain
+
 - Medical data processing
 - Healthcare-focused UI
 - Medical terminology integration
 
 ### ⚖️ Legal Domain
+
 - Legal document processing
 - Case management
 - Legal research capabilities
 
 ### 💰 Finance Domain
+
 - Financial data analysis
 - Market trend visualization
 - Investment planning tools
 
 ### 👩‍💻 Developer Domain
+
 - Code generation and analysis
 - Project scaffolding
 - Documentation assistance

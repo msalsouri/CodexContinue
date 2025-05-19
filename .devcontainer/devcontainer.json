@@ -44,7 +44,14 @@
     }
   },
   "remoteUser": "appuser",
-  "forwardPorts": [8000, 8501, 5000, 6379, 11434, 8888],
+  "forwardPorts": [
+    8000,
+    8501,
+    5000,
+    6379,
+    11434,
+    8888
+  ],
   "shutdownAction": "stopCompose",
   "postCreateCommand": "echo 'Starting container initialization...' && ls -la /app && echo 'Installing Python packages...' && find /app -name 'requirements*.txt' -exec pip install -r {} \\; && echo 'Environment ready!'",
   "postStartCommand": "echo 'Container started successfully - CodexContinue development environment is ready!'"

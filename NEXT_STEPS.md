@@ -40,8 +40,14 @@ git push -u origin main
 
 2. Choose your Windows setup option:
 
+   - **Windows Subsystem for Linux (WSL):** Follow [docs/WINDOWS_WSL_GUIDE.md](docs/WINDOWS_WSL_GUIDE.md) (Recommended for best GPU integration)
+
+      ```bash
+      # Quick setup after cloning
+      ./scripts/wsl-quick-setup.sh
+      ```
+
    - **Native Windows with Docker Desktop:** Follow [docs/WINDOWS_QUICKSTART.md](docs/WINDOWS_QUICKSTART.md)
-   - **Windows Subsystem for Linux (WSL):** Follow [docs/WSL_SETUP.md](docs/WSL_SETUP.md) (Recommended for better GPU integration)
 
 ## 5. Development Workflow
 

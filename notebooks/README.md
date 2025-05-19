@@ -7,7 +7,7 @@ This directory contains Jupyter notebooks for data exploration, model developmen
 These notebooks can be accessed through the Jupyter Lab instance that runs as part of the development container.
 When the development container is running, Jupyter Lab is available at:
 
-http://localhost:8888
+<http://localhost:8888>
 
 You can also use the provided script to launch Jupyter Lab:
 
@@ -62,16 +62,19 @@ plt.savefig('/notebooks/exports/my_figure.png')
 If you encounter issues with the Jupyter environment:
 
 1. Verify the Jupyter container is running:
+
    ```bash
    ./scripts/verify-jupyter.sh
    ```
 
 2. Restart the Jupyter container:
+
    ```bash
    docker compose restart jupyter
    ```
 
 3. Check the container logs:
+
    ```bash
    docker logs codexcontinue-jupyter
    ```
