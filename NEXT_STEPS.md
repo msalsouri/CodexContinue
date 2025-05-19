@@ -66,6 +66,7 @@ git push -u origin main
 - macOS uses CPU-only mode for Ollama via `docker-compose.macos.yml`
 - Windows uses GPU acceleration via the standard Docker Compose setup
 - Docker volumes are platform-specific, so model weights will be stored separately on each system
+- Run `./scripts/check-platform.sh` to verify your environment configuration
 
 ## 7. Troubleshooting
 
