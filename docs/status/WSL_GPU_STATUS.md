@@ -49,11 +49,18 @@ docker compose -f docker-compose.yml -f docker-compose.macos.yml up
 The following scripts are available to diagnose and fix issues:
 
 - `scripts/verify-nvidia-wsl.sh` - Checks NVIDIA driver setup in WSL
-- `scripts/fix-nvidia-wsl-libs.sh` - Fixes missing library symbolic links
-- `scripts/fix-nvidia-docker-wsl.sh` - Configures Docker to work with NVIDIA GPUs
+- `scripts/fix-nvidia-wsl-libs.sh` - Fixes NVIDIA library symlinks in WSL
+- `scripts/fix-nvidia-docker-wsl.sh` - Configures Docker to use NVIDIA runtime
+- `scripts/manage-ollama-process.sh` - Manages Ollama processes and fixes port conflicts
+- `scripts/troubleshoot-wsl-gpu.sh` - Comprehensive GPU troubleshooting script
 
-## Additional Resources
+## Common Issues
 
-- Jupyter notebook with diagnostic steps: `notebooks/nvidia_wsl_fix_guide.ipynb`
-- WSL GPU setup guide: `notebooks/wsl_gpu_setup_guide.ipynb`
-- NVIDIA CUDA on WSL documentation: https://docs.nvidia.com/cuda/wsl-user-guide/index.html
+### Shell Warnings
+
+If you notice warnings in the top-left corner of your terminal, refer to:
+- [Shell Warnings Fix](../troubleshooting/SHELL_WARNINGS_FIX.md)
+
+These are typically related to Docker configuration or missing Docker plugins and can be safely fixed.
+
+### Docker Errors

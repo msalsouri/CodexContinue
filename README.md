@@ -176,6 +176,14 @@ For more detailed documentation on each component:
 - [Deployment Guide](docs/deployment.md)
 - [Developer Guide](docs/developer.md)
 
+## 🔧 Troubleshooting
+
+If you encounter issues while setting up or running CodexContinue:
+
+- [Shell Warnings Fix](docs/troubleshooting/SHELL_WARNINGS_FIX.md) - Solutions for common terminal warnings
+- [DevContainer Troubleshooting](docs/troubleshooting/DEVCONTAINER_TROUBLESHOOTING.md) - Fixing development container issues
+- [WSL GPU Setup Guide](notebooks/nvidia_wsl_fix_guide.ipynb) - Detailed guide for NVIDIA GPU support in WSL
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please check out our [Contributing Guide](CONTRIBUTING.md).
