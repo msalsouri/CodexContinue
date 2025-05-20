@@ -6,8 +6,8 @@
 set -e
 
 # Configuration
-PROJECT_DIR="/Users/msalsouri/Projects/CodexContinue"
-SCRIPT_DIR="${PROJECT_DIR}/scripts"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Colors for output
 RED='\033[0;31m'

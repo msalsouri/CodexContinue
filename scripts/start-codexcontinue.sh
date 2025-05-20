@@ -6,7 +6,9 @@
 set -e
 
 # Configuration
-PROJECT_DIR="/Users/msalsouri/Projects/CodexContinue"
+# Get the current script directory and navigate to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
 # Colors for output

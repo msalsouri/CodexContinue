@@ -8,7 +8,8 @@ set -e
 # Configuration
 PROJECT_NAME="codexcontinue"
 REGISTRY="registry.example.com"  # Change to your Docker registry if needed
-BUILD_BASE_DIR="/Users/msalsouri/Projects/CodexContinue"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+BUILD_BASE_DIR="$(dirname "$SCRIPT_DIR")"
 SERVICES=("backend" "frontend" "ml")
 ENV="${1:-dev}"  # Default to dev if no environment specified
 
