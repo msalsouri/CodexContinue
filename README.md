@@ -182,6 +182,7 @@ If you encounter issues while setting up or running CodexContinue:
 
 - [Shell Warnings Fix](docs/troubleshooting/SHELL_WARNINGS_FIX.md) - Solutions for common terminal warnings
 - [DevContainer Troubleshooting](docs/troubleshooting/DEVCONTAINER_TROUBLESHOOTING.md) - Fixing development container issues
+- [Docker Linux/WSL Troubleshooting](docs/troubleshooting/DOCKER_LINUX_WSL_TROUBLESHOOTING.md) - Solutions for Docker container issues in Linux/WSL
 - [WSL GPU Setup Guide](notebooks/nvidia_wsl_fix_guide.ipynb) - Detailed guide for NVIDIA GPU support in WSL
 
 ### Testing Service Ports
