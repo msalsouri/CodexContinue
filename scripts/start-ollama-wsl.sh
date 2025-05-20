@@ -43,6 +43,46 @@ if ! docker info > /dev/null 2>&1; then
 fi
 log "Docker is running."
 
+# Check if port 11434 is already in use
+log "Checking if port 11434 is already in use..."
+if lsof -i :11434 &> /dev/null; then
+    warn "Port 11434 is already in use. This might be another Ollama instance."
+    echo "Current processes using port 11434:"
+    lsof -i :11434
+    
+    read -p "Do you want to stop the existing process? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Try to stop the process - first check if it's Ollama
+        if lsof -i :11434 | grep -q ollama; then
+            log "Stopping Ollama service..."
+            # Try systemctl first
+            if systemctl stop ollama &> /dev/null; then
+                log "Stopped Ollama service"
+            else
+                # Try to kill the process
+                ollama_pid=$(pgrep ollama)
+                if [ -n "$ollama_pid" ]; then
+                    log "Killing Ollama process with PID $ollama_pid"
+                    sudo kill $ollama_pid
+                    sleep 2
+                    # Verify it's actually stopped
+                    if lsof -i :11434 &> /dev/null; then
+                        error "Failed to stop the process using port 11434. Please stop it manually and try again."
+                    fi
+                else
+                    error "Could not find Ollama process ID. Please stop it manually and try again."
+                fi
+            fi
+        else
+            error "Unknown process using port 11434. Please stop it manually and try again."
+        fi
+    else
+        error "Port 11434 is needed for Ollama. Please free up the port and try again."
+    fi
+fi
+log "Port 11434 is available."
+
 # Check GPU access
 log "Checking GPU access..."
 if ! nvidia-smi &> /dev/null; then
