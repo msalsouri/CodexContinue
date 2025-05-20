@@ -26,8 +26,12 @@ RUN groupadd -g 1000 appuser && \
 FROM base as development
 
 # Install development dependencies
-COPY requirements.txt requirements-dev.txt ./
+COPY ml/requirements.txt ./requirements.txt
+COPY ml/requirements-dev.txt ./requirements-dev.txt
 RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Make sure flask and essential packages are explicitly installed
+RUN pip install flask==2.3.0 gunicorn==21.2.0
 
 # Use non-root user
 USER appuser
