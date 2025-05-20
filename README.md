@@ -184,6 +184,20 @@ If you encounter issues while setting up or running CodexContinue:
 - [DevContainer Troubleshooting](docs/troubleshooting/DEVCONTAINER_TROUBLESHOOTING.md) - Fixing development container issues
 - [WSL GPU Setup Guide](notebooks/nvidia_wsl_fix_guide.ipynb) - Detailed guide for NVIDIA GPU support in WSL
 
+### Testing Service Ports
+
+If you experience connectivity or port conflict issues, use our port testing script:
+
+```bash
+# Test if all CodexContinue service ports are working
+./scripts/test-codexcontinue-ports.sh
+```
+
+This script will check:
+- If the required ports (8000, 8501, 5000, 11434) are in use
+- If the services are responding to requests
+- If Ollama API is responding and models are available
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please check out our [Contributing Guide](CONTRIBUTING.md).
