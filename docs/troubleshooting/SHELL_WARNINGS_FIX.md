@@ -2,21 +2,6 @@
 
 This document provides solutions for common shell warnings that may appear in the top-left corner of your terminal when working with CodexContinue in WSL.
 
-## Quick Fix Script
-
-For convenience, we've provided a script that can automatically check for and fix common shell warnings:
-
-```bash
-./scripts/check-shell-warnings.sh
-```
-
-This script will:
-- Check for duplicate NVM entries in `.bashrc`
-- Fix broken Docker feedback plugin symlinks
-- Verify NVIDIA driver status
-- Check Ollama port usage
-- Provide a summary of findings
-
 ## Common Issues and Solutions
 
 ### 1. Docker Feedback Plugin Warning
@@ -61,43 +46,37 @@ WARNING: No blkio throttle.write_bps_device support
 **Explanation:**
 These are informational warnings from Docker about missing kernel features for I/O throttling in WSL. They don't affect functionality and can be safely ignored.
 
-### 4. NVIDIA Container Toolkit Warnings
+## Automatic Diagnosis and Fixes
 
-**Symptom:**
-Various warnings related to NVIDIA drivers or containers.
-
-**Solution:**
-Run our verification and fix scripts:
+We've provided a script that can automatically detect and fix these issues:
 
 ```bash
 cd ~/Projects/CodexContinue
-./scripts/verify-nvidia-wsl.sh
-sudo ./scripts/fix-nvidia-wsl-libs.sh
+./scripts/check-shell-warnings.sh
 ```
 
-## General Troubleshooting Steps
+The script will:
+1. Check for duplicate NVM entries in .bashrc
+2. Check for broken Docker feedback plugin symlinks
+3. Identify Docker throttle warnings and explain them
+4. Check NVIDIA driver status
+5. Offer to fix identified issues
 
-If you encounter other shell warnings:
+## Verifying Fixes
 
-1. **Check shell startup files** for errors:
-   ```bash
-   bash -x -c "echo Test" 2>&1 | grep -E "warning|error"
-   ```
+To verify that the fixes have taken effect, restart your shell:
 
-2. **Check Docker status**:
-   ```bash
-   docker info
-   ```
+```bash
+exec bash -l
+```
 
-3. **Verify NVIDIA driver status**:
-   ```bash
-   nvidia-smi
-   ```
+Then run a Docker command and check for warnings:
 
-4. **Check for processes using specific ports**:
-   ```bash
-   lsof -i :11434  # For Ollama's port
-   ```
+```bash
+docker info | grep -i warning
+```
+
+The Docker feedback plugin warning should be gone. The throttle warnings are normal in WSL and can be safely ignored.
 
 ## Contact
 

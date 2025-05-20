@@ -9,6 +9,7 @@ This document outlines the steps taken to configure NVIDIA GPU support in WSL fo
 - ✅ NVIDIA Container Toolkit is installed and configured
 - ✅ Docker is configured with NVIDIA runtime support
 - ✅ GPU acceleration is available to containers
+- ✅ Shell warnings related to Docker/NVIDIA have been fixed
 
 ## Steps Completed
 
@@ -16,6 +17,18 @@ This document outlines the steps taken to configure NVIDIA GPU support in WSL fo
 2. Fixed missing library symbolic links in `/usr/lib/wsl/lib/` using `fix-nvidia-wsl-libs.sh`
 3. Verified Docker integration with NVIDIA GPU
 4. Created documentation and diagnostic tools
+5. Fixed shell warnings related to Docker feedback plugin and duplicate NVM entries
+
+## Troubleshooting
+
+If you encounter shell warnings, please refer to:
+- [Shell Warnings Fix](../troubleshooting/SHELL_WARNINGS_FIX.md) - Comprehensive guide to fix common shell warnings
+
+You can also run our automatic shell warnings diagnostic and fix script:
+```bash
+cd ~/Projects/CodexContinue
+./scripts/check-shell-warnings.sh
+```
 
 ## Useful Commands
 
