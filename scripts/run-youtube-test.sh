@@ -47,7 +47,11 @@ sleep 2
 
 # Start the ML service in the background with explicit environment variables
 echo "Starting ML service..."
-PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py > ml-service.log 2>&1 &
+PYTHONPATH=/home/msalsouri/Projects/CodexContinue \
+FFMPEG_LOCATION=/usr/bin \
+PATH=/usr/bin:$PATH \
+OLLAMA_MODEL="${OLLAMA_MODEL:-llama3}" \
+python3 ml/app.py > ml-service.log 2>&1 &
 ML_PID=$!
 
 # Wait for the service to start

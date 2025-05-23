@@ -103,9 +103,11 @@ class YouTubeTranscriber:
             }],
             'quiet': False,
             'no_warnings': False,
-            'ffmpeg_location': '/usr/bin',  # Explicitly set ffmpeg location
+            'ffmpeg_location': self.ffmpeg_location,  # Use the instance variable
             'verbose': True  # Add verbose output for troubleshooting
         }
+        
+        logger.info(f"Using ffmpeg_location: {self.ffmpeg_location}")
         
         # Download the audio
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

@@ -50,6 +50,10 @@ def main():
     os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
     os.environ['FFMPEG_LOCATION'] = "/usr/bin"
     
+    # Make this location accessible to subprocess calls as well
+    os.putenv('PATH', f"/usr/bin:{os.environ.get('PATH', '')}")
+    os.putenv('FFMPEG_LOCATION', "/usr/bin")
+    
     # Print environment variables
     print("Environment:")
     print(f"  PATH: {os.environ.get('PATH', 'Not set')}")

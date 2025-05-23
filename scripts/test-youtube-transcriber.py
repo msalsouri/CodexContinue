@@ -19,6 +19,9 @@ def test_youtube_transcriber(url, generate_summary=False):
         if '/usr/bin' not in os.environ.get('PATH', ''):
             os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
         
+        # Explicitly set ffmpeg location
+        os.environ['FFMPEG_LOCATION'] = '/usr/bin'
+        
         # Call the ML service API
         response = requests.post(
             "http://localhost:5000/youtube/transcribe",
