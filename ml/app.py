@@ -49,13 +49,20 @@ def transcribe_youtube():
         if '/usr/bin' not in os.environ.get('PATH', ''):
             os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
         
-        # Set explicit ffmpeg location
-        os.environ['FFMPEG_LOCATION'] = '/usr/bin'
+        # Set explicit ffmpeg location and ensure it's properly passed
+        ffmpeg_location = '/usr/bin'
+        os.environ['FFMPEG_LOCATION'] = ffmpeg_location
+        
+        # Print debugging information
+        print(f"Using ffmpeg location: {ffmpeg_location}")
+        print(f"PATH: {os.environ.get('PATH')}")
         
         # Import here to avoid importing on startup if whisper is not installed
         from ml.services.youtube_transcriber import YouTubeTranscriber
         
         transcriber = YouTubeTranscriber(whisper_model_size="base")
+        print(f"Transcriber initialized with ffmpeg_location: {transcriber.ffmpeg_location}")
+        
         result = transcriber.process_video(url, language, generate_summary=generate_summary)
         
         response_data = {
