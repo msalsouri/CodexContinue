@@ -30,6 +30,24 @@ class YouTubeTranscriber:
         # Default Ollama endpoint
         self.ollama_api_url = os.environ.get("OLLAMA_API_URL", "http://localhost:11434")
         self.ollama_model = os.environ.get("OLLAMA_MODEL", "codexcontinue")
+        
+        # Ensure ffmpeg is in PATH
+        if '/usr/bin' not in os.environ.get('PATH', ''):
+            os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
+            
+        # Set ffmpeg location from environment if available
+        self.ffmpeg_location = os.environ.get("FFMPEG_LOCATION", "/usr/bin")
+        
+        # Verify that ffmpeg and ffprobe are available
+        ffmpeg_path = os.path.join(self.ffmpeg_location, "ffmpeg")
+        ffprobe_path = os.path.join(self.ffmpeg_location, "ffprobe")
+        
+        if not os.path.exists(ffmpeg_path):
+            logger.warning(f"ffmpeg not found at {ffmpeg_path}")
+        if not os.path.exists(ffprobe_path):
+            logger.warning(f"ffprobe not found at {ffprobe_path}")
+            
+        logger.info(f"Using ffmpeg from: {self.ffmpeg_location}")
     
     def _load_model(self):
         """Load the Whisper model if not already loaded."""
@@ -67,7 +85,9 @@ class YouTubeTranscriber:
                 'preferredquality': '192',
             }],
             'quiet': False,
-            'no_warnings': False
+            'no_warnings': False,
+            'ffmpeg_location': '/usr/bin',  # Explicitly set ffmpeg location
+            'verbose': True  # Add verbose output for troubleshooting
         }
         
         # Download the audio
