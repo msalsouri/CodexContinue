@@ -1,6 +1,6 @@
 # YouTube Transcription Feature
 
-This feature allows you to transcribe YouTube videos to text and optionally summarize the content using Ollama.
+This feature allows you to transcribe YouTube videos to text and optionally summarize the content using Ollama. It provides an easy way to extract information from educational videos and presentations.
 
 ## Overview
 
