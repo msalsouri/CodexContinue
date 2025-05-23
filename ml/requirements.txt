@@ -14,3 +14,8 @@ requests>=2.31.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
 uuid>=1.30
+
+# YouTube transcription dependencies
+yt-dlp>=2023.3.4
+openai-whisper>=20230314
+ffmpeg-python>=0.2.0

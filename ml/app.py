@@ -33,6 +33,39 @@ def health():
         "environment": env_vars
     })
 
+@app.route('/youtube/transcribe', methods=["POST"])
+def transcribe_youtube():
+    """Transcribe a YouTube video."""
+    data = request.get_json(silent=True) or {}
+    url = data.get("url")
+    language = data.get("language")
+    generate_summary = data.get("generate_summary", False)
+    
+    if not url:
+        return jsonify({"error": "No URL provided"}), 400
+    
+    try:
+        # Import here to avoid importing on startup if whisper is not installed
+        from ml.services.youtube_transcriber import YouTubeTranscriber
+        
+        transcriber = YouTubeTranscriber(whisper_model_size="base")
+        result = transcriber.process_video(url, language, generate_summary=generate_summary)
+        
+        response_data = {
+            "text": result["text"],
+            "segments": result["segments"],
+            "source_url": result["source_url"]
+        }
+        
+        # Include summary if it was generated
+        if generate_summary and "summary" in result:
+            response_data["summary"] = result["summary"]
+        
+        return jsonify(response_data)
+    except Exception as e:
+        logger.error(f"Error transcribing YouTube video: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     # Log some debug information
     logger.info("Starting ML service...")
