@@ -4,13 +4,10 @@ RAG Proxy for MCP Server - Integrates vector database retrieval with LiteLLM
 """
 
 import os
-import time
-import json
-import uuid
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 import requests
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 # Import our custom services

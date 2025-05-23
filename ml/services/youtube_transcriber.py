@@ -4,8 +4,6 @@ YouTube Transcription Service for CodexContinue
 """
 
 import os
-import tempfile
-import subprocess
 from typing import Dict, Any, Optional
 import logging
 import yt_dlp
@@ -375,6 +373,9 @@ SUMMARY:"""
         start_time = time.time()
         logger.info(f"Processing video from URL: {url}")
         
+        # Initialize result variable
+        result = None
+        
         try:
             # Download the audio
             logger.info("Step 1: Downloading audio...")
@@ -436,8 +437,8 @@ SUMMARY:"""
             }
             
             # Try to add some text if we have it (partial results)
-            if 'result' in locals() and isinstance(result, dict) and "text" in result:
+            if 'result' in locals() and result is not None and isinstance(result, dict) and "text" in result:
                 error_result["partial_text"] = result["text"]
                 error_result["partial_segments"] = result.get("segments", [])
             
-            raise RuntimeError(f"Failed to process YouTube video: {str(e)}")
+            return error_result
