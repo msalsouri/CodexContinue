@@ -68,6 +68,14 @@ tmp/
 .idea/
 *.swp
 *.swo
+*.pid
+direct_test_result.json
+direct_test_transcript.txt
+end_to_end_test_result.json
+full_transcript_test.txt
+resource_usage_test.json
+summarization_test_result.json
+transcription_test_results.json
 
 # Redis data
 redis-data/

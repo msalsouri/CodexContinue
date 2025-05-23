@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update &&     apt-get install -y --no-install-recommends     curl     gnupg     build-essential     git     && rm -rf /var/lib/apt/lists/*
+
+# Copy ML service requirements and install dependencies
+COPY ml/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy ML service code
+COPY ml/ /app/ml/
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV OLLAMA_API_URL=http://host.docker.internal:11434
+
+# Expose port
+EXPOSE 5000
+
+# Run the Flask application
+CMD ["python", "ml/app.py"]
