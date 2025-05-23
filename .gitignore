@@ -86,3 +86,4 @@ redis-data/
 *.model
 *.joblib
 *.tf
+transcript_test_output.txt
