@@ -10,13 +10,15 @@ RUN apt-get update && \
     gnupg \
     build-essential \
     git \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Python setup
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    FFMPEG_LOCATION=/usr/bin
 
 # Create a non-root user
 RUN groupadd -g 1000 appuser && \
