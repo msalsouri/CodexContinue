@@ -47,7 +47,7 @@ def get_relevant_context(query: str, k: int = 5) -> str:
 
 
 def forward_request_to_litellm(endpoint: str, original_data: Dict[str, Any], 
-                              context: str = None) -> Dict[str, Any]:
+                              context: Optional[str] = None) -> Dict[str, Any]:
     """
     Forward a request to LiteLLM with optional context augmentation.
     """
@@ -152,7 +152,7 @@ def health():
 def completions():
     """Proxy for the completions endpoint with RAG augmentation."""
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         
         # Extract the prompt for context retrieval
         prompt = data.get('prompt', '')
@@ -181,7 +181,7 @@ def completions():
 def chat_completions():
     """Proxy for the chat completions endpoint with RAG augmentation."""
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         
         # Extract messages for context retrieval
         messages = data.get('messages', [])
@@ -225,7 +225,7 @@ def list_models():
 def import_knowledge():
     """Import documents into the RAG knowledge base."""
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         
         # Check if directory path is provided
         directory_path = data.get('directory_path')
@@ -233,7 +233,10 @@ def import_knowledge():
             return jsonify({"error": "Directory path is required"}), 400
             
         # Optional file types filter
-        file_types = data.get('file_types', None)
+        file_types = data.get('file_types')
+        # Ensure file_types is a list if provided
+        if file_types is not None and not isinstance(file_types, list):
+            file_types = [file_types]
         
         # Import documents
         result = knowledge_manager.import_directory(directory_path, file_types)
@@ -253,7 +256,7 @@ def import_knowledge():
 def query_knowledge():
     """Query the RAG knowledge base directly."""
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         
         # Check if query is provided
         query = data.get('query')
@@ -278,14 +281,17 @@ def query_knowledge():
 
 if __name__ == '__main__':
     # Create necessary directories
-    os.makedirs(os.getenv("VECTOR_DB_PATH", "/app/data/vectorstore"), exist_ok=True)
-    os.makedirs(os.getenv("KNOWLEDGE_BASE_PATH", "/app/data/knowledge_base"), exist_ok=True)
+    vector_db_path = os.getenv("VECTOR_DB_PATH", os.path.join(os.path.expanduser("~"), ".codexcontinue/data/vectorstore"))
+    knowledge_base_path = os.getenv("KNOWLEDGE_BASE_PATH", os.path.join(os.path.expanduser("~"), ".codexcontinue/data/knowledge_base"))
+    
+    os.makedirs(vector_db_path, exist_ok=True)
+    os.makedirs(knowledge_base_path, exist_ok=True)
     
     # Log startup information
     logger.info("Starting RAG proxy for MCP...")
     logger.info(f"LiteLLM API URL: {LITELLM_API_URL}")
-    logger.info(f"Vector store directory: {os.getenv('VECTOR_DB_PATH', '/app/data/vectorstore')}")
-    logger.info(f"Knowledge base directory: {os.getenv('KNOWLEDGE_BASE_PATH', '/app/data/knowledge_base')}")
+    logger.info(f"Vector store directory: {vector_db_path}")
+    logger.info(f"Knowledge base directory: {knowledge_base_path}")
     
     # Start the server
     app.run(host='0.0.0.0', port=RAG_PROXY_PORT, debug=DEBUG)

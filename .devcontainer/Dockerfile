@@ -1,7 +1,7 @@
 # Development container configuration for the CodexContinue project
 # Use this file to develop inside a container with VS Code
 
-FROM python:3.10-slim as devcontainer
+FROM python:3.12-slim AS devcontainer
 
 WORKDIR /app
 

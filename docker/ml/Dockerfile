@@ -1,5 +1,5 @@
 # Base image for all ML service environments
-FROM python:3.10-slim as base
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ RUN groupadd -g 1000 appuser && \
     useradd -u 1000 -g appuser -s /bin/bash -m appuser
 
 # Development stage
-FROM base as development
+FROM base AS development
 
 # Copy requirements first for better caching
 COPY ml/requirements.txt ./requirements.txt
@@ -42,7 +42,7 @@ ENV DEBUG=true
 CMD ["python", "/app/ml/app.py"]
 
 # Production stage
-FROM base as production
+FROM base AS production
 
 # Copy and install production dependencies
 COPY requirements.txt ./

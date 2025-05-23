@@ -1,5 +1,5 @@
 # Base image for all backend environments
-FROM python:3.10-slim as base
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ RUN groupadd -g 1000 appuser && \
     useradd -u 1000 -g appuser -s /bin/bash -m appuser
 
 # Development stage
-FROM base as development
+FROM base AS development
 
 # Install development dependencies
 COPY requirements.txt requirements-dev.txt ./
@@ -40,11 +40,15 @@ ENV DEBUG=true
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # Production stage
-FROM base as production
+FROM base AS production
 
 # Copy and install production dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Security scanning for vulnerabilities (comment out if build time is a concern)
+RUN pip install safety && \
+    safety check || echo "Security vulnerabilities found, review them above"
 
 # Copy application code
 COPY . .

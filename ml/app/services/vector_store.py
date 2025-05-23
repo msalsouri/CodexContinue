@@ -2,8 +2,8 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 
@@ -20,7 +20,7 @@ class VectorStore:
         )
         
         # Connect to ChromaDB (either local or via the service)
-        persist_directory = os.getenv("VECTOR_DB_PATH", "/app/data/vectorstore")
+        persist_directory = os.getenv("VECTOR_DB_PATH", os.path.join(os.path.expanduser("~"), ".codexcontinue/data/vectorstore"))
         chroma_url = os.getenv("CHROMA_URL", None)
         
         if chroma_url:

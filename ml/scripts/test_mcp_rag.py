@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Default config
 DEFAULT_MCP_URL = "http://localhost:5000"
-DEFAULT_TEST_DIRECTORY = "/app/ml/scripts/test_data"
+DEFAULT_TEST_DIRECTORY = os.path.join(os.path.expanduser("~"), ".codexcontinue/test_data")
 
 def create_test_data(directory):
     """Create test data files for RAG testing"""
@@ -23,7 +23,7 @@ def create_test_data(directory):
         f.write("""
 # This is a sample Python file for testing RAG
 def fibonacci(n):
-    """Calculate the nth Fibonacci number using dynamic programming"""
+    \"\"\"Calculate the nth Fibonacci number using dynamic programming\"\"\"
     if n <= 0:
         return 0
     elif n == 1:
@@ -39,7 +39,7 @@ def fibonacci(n):
     return fib[n]
 
 def factorial(n):
-    """Calculate the factorial of n recursively"""
+    \"\"\"Calculate the factorial of n recursively\"\"\"
     if n == 0 or n == 1:
         return 1
     else:
