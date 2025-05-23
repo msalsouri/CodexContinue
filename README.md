@@ -15,6 +15,7 @@ CodexContinue features built-in learning capabilities through:
 2. **Domain Adaptation**: Ability to customize the system for specific domains
 3. **Model Customization**: Flexible model configuration via Modelfile
 4. **Knowledge Integration**: Easy integration of new knowledge and capabilities
+5. **YouTube Transcription**: Convert YouTube videos to text and summaries
 
 The system uses a custom CodexContinue model built on Llama3, specifically designed for software development tasks with:
 
