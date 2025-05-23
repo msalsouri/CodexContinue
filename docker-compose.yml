@@ -54,10 +54,14 @@ services:
     environment:
       - PYTHONPATH=/app
       - OLLAMA_API_URL=http://ollama:11434
+      - VECTOR_DB_PATH=/app/data/vectorstore
+      - KNOWLEDGE_BASE_PATH=/app/data/knowledge_base
     depends_on:
       - ollama
     volumes:
       - ./ml:/app/ml
+      - vector-data:/app/data/vectorstore
+      - knowledge-data:/app/data/knowledge_base
     networks:
       - codexcontinue-network
     healthcheck:
@@ -93,3 +97,5 @@ networks:
 volumes:
   redis-data:
   ollama-data:
+  vector-data:
+  knowledge-data:

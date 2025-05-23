@@ -25,23 +25,21 @@ RUN groupadd -g 1000 appuser && \
 # Development stage
 FROM base as development
 
-# Install development dependencies
+# Copy requirements first for better caching
 COPY ml/requirements.txt ./requirements.txt
-COPY ml/requirements-dev.txt ./requirements-dev.txt
-RUN pip install --no-cache-dir -r requirements-dev.txt
+RUN if [ -f ml/requirements-dev.txt ]; then cp ml/requirements-dev.txt ./requirements-dev.txt; fi
+RUN pip install --no-cache-dir -r requirements.txt && \
+    if [ -f requirements-dev.txt ]; then pip install --no-cache-dir -r requirements-dev.txt; fi
 
 # Make sure flask and essential packages are explicitly installed
-RUN pip install flask==2.3.0 gunicorn==21.2.0
-
-# Use non-root user
-USER appuser
+RUN pip install flask==2.3.0 flask-cors==4.0.0 gunicorn==21.2.0
 
 # Set environment variables
 ENV PYTHONPATH=/app
 ENV DEBUG=true
 
 # Command to run the application in development mode
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000", "--debugger", "--reload"]
+CMD ["python", "/app/ml/app.py"]
 
 # Production stage
 FROM base as production
