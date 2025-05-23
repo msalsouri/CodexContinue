@@ -7,6 +7,7 @@ import sys
 import requests
 import json
 import argparse
+import os
 
 def test_youtube_transcriber(url, generate_summary=False):
     """Test the YouTube transcription feature with a given URL."""
@@ -14,6 +15,10 @@ def test_youtube_transcriber(url, generate_summary=False):
     print(f"Summary generation: {'Enabled' if generate_summary else 'Disabled'}")
     
     try:
+        # Set environment variables to ensure proper paths
+        if '/usr/bin' not in os.environ.get('PATH', ''):
+            os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
+        
         # Call the ML service API
         response = requests.post(
             "http://localhost:5000/youtube/transcribe",

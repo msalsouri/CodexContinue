@@ -45,6 +45,13 @@ def transcribe_youtube():
         return jsonify({"error": "No URL provided"}), 400
     
     try:
+        # Set PATH to ensure ffmpeg is accessible
+        if '/usr/bin' not in os.environ.get('PATH', ''):
+            os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
+        
+        # Set explicit ffmpeg location
+        os.environ['FFMPEG_LOCATION'] = '/usr/bin'
+        
         # Import here to avoid importing on startup if whisper is not installed
         from ml.services.youtube_transcriber import YouTubeTranscriber
         
