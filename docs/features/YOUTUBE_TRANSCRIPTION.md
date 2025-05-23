@@ -69,6 +69,9 @@ For more detailed testing and troubleshooting, we provide additional test script
 
 # Test the transcriber directly without Flask
 python3 scripts/test-transcriber-direct.py
+
+# Comprehensive validation of ffmpeg integration and transcription
+python3 scripts/test-transcriber-full.py
 ```
 
 These scripts include detailed logging and environment setup to ensure ffmpeg is properly configured.
@@ -111,6 +114,30 @@ If you encounter issues:
 - Check the ML service logs for detailed error messages
 - Try with a shorter video if processing is taking too long
 - Use the CPU-only mode if GPU integration is causing issues
+
+### FFmpeg Troubleshooting
+
+If you encounter errors related to ffmpeg not being found:
+
+1. Verify ffmpeg is installed:
+   ```bash
+   ffmpeg -version
+   which ffmpeg
+   ```
+
+2. Run the comprehensive test script to validate ffmpeg integration:
+   ```bash
+   python3 scripts/test-transcriber-full.py
+   ```
+
+3. Common solutions:
+   - Install ffmpeg if missing: `sudo apt-get install -y ffmpeg`
+   - Set PATH and FFMPEG_LOCATION environment variables:
+     ```bash
+     export PATH=/usr/bin:$PATH
+     export FFMPEG_LOCATION=/usr/bin
+     ```
+   - For Docker environments, ensure ffmpeg is installed in the container
 
 ### Ollama Configuration
 
