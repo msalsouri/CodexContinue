@@ -59,6 +59,20 @@ python3 scripts/test-youtube-transcriber.py --url "https://www.youtube.com/watch
 python3 scripts/test-youtube-transcriber.py --url "https://www.youtube.com/watch?v=YourVideoID" --summarize
 ```
 
+### Advanced Testing
+
+For more detailed testing and troubleshooting, we provide additional test scripts:
+
+```bash
+# Run the complete test suite (component test + end-to-end test)
+./scripts/run-youtube-test.sh
+
+# Test the transcriber directly without Flask
+python3 scripts/test-transcriber-direct.py
+```
+
+These scripts include detailed logging and environment setup to ensure ffmpeg is properly configured.
+
 ## Technical Implementation
 
 The feature consists of three main components:
@@ -93,9 +107,30 @@ If you encounter issues:
 - Ensure ffmpeg is properly installed: `ffmpeg -version`
 - Check if Whisper is installed: `pip show openai-whisper`
 - Verify the Ollama service is running: `curl http://localhost:11434/api/tags`
+- Run the setup script: `./scripts/setup-ollama-for-transcription.sh` to configure Ollama
 - Check the ML service logs for detailed error messages
 - Try with a shorter video if processing is taking too long
 - Use the CPU-only mode if GPU integration is causing issues
+
+### Ollama Configuration
+
+For summarization to work, you need a working Ollama installation with at least one model.
+The system will automatically use an available model in this order of preference:
+1. `codexcontinue` (custom model optimized for CodexContinue)
+2. `llama3` 
+3. `llama2`
+4. `mistral`
+5. `codellama`
+6. Any other available model
+
+To configure Ollama and set up an appropriate model:
+```bash
+# Start Ollama if not already running
+./scripts/start-ollama-wsl.sh
+
+# Configure Ollama for transcription (automatic model selection)
+./scripts/setup-ollama-for-transcription.sh
+```
 
 ## Limitations
 

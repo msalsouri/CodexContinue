@@ -35,6 +35,23 @@ class YouTubeTranscriber:
         if '/usr/bin' not in os.environ.get('PATH', ''):
             os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
             
+        # Try to read configuration file if it exists
+        config_file = os.path.join(os.path.expanduser("~"), ".codexcontinue/config/transcription.env")
+        if os.path.exists(config_file):
+            try:
+                with open(config_file, 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            key, value = line.strip().split('=', 1)
+                            if key == "OLLAMA_MODEL" and value:
+                                self.ollama_model = value
+                                logger.info(f"Using Ollama model from config: {self.ollama_model}")
+                            elif key == "OLLAMA_API_URL" and value:
+                                self.ollama_api_url = value
+                                logger.info(f"Using Ollama API URL from config: {self.ollama_api_url}")
+            except Exception as e:
+                logger.warning(f"Failed to read configuration file: {str(e)}")
+            
         # Set ffmpeg location from environment if available
         self.ffmpeg_location = os.environ.get("FFMPEG_LOCATION", "/usr/bin")
         
@@ -143,8 +160,54 @@ TRANSCRIPT:
 SUMMARY:"""
         
         try:
-            # Call Ollama API
+            # First check if the model exists
             headers = {"Content-Type": "application/json"}
+            model_check = requests.get(f"{self.ollama_api_url}/api/tags")
+            
+            if model_check.status_code != 200:
+                logger.error(f"Error connecting to Ollama API: {model_check.status_code}")
+                return {
+                    "summary": f"Error connecting to Ollama API: {model_check.status_code}",
+                    "error": True
+                }
+                
+            # Check if the configured model exists
+            models_json = model_check.json()
+            available_models = [model["name"] for model in models_json.get("models", [])]
+            
+            # If our model doesn't exist, try to find an alternative
+            if not available_models:
+                logger.error("No models available in Ollama")
+                return {
+                    "summary": "No language models available in Ollama service",
+                    "error": True
+                }
+                
+            if self.ollama_model not in available_models:
+                logger.warning(f"Model {self.ollama_model} not found. Looking for alternatives...")
+                # Try to find a suitable alternative
+                preferred_models = ["llama3", "llama2", "mistral", "codellama"]
+                found_model = None
+                
+                for model in preferred_models:
+                    if model in available_models:
+                        found_model = model
+                        break
+                
+                if not found_model and available_models:
+                    found_model = available_models[0]
+                    
+                if found_model:
+                    logger.info(f"Using alternative model: {found_model}")
+                    self.ollama_model = found_model
+                else:
+                    logger.error("No suitable models found in Ollama")
+                    return {
+                        "summary": "No suitable language models found in Ollama service",
+                        "error": True
+                    }
+            
+            # Now call Ollama API with the selected model
             data = {
                 "model": self.ollama_model,
                 "prompt": prompt,

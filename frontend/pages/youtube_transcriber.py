@@ -130,7 +130,11 @@ if transcribe_button or transcribe_and_summarize:
                         else:
                             st.info("No summary was requested. Use the 'Transcribe & Summarize' button to generate a summary.")
                 else:
-                    st.error(f"Error: {response.text}")
+                    if response.status_code == 500 and "model not found" in response.text.lower():
+                        st.error("Error: Ollama model not found. The summarization feature requires Ollama to be running with a compatible model.")
+                        st.info("Run the following command to set up Ollama: ./scripts/setup-ollama-for-transcription.sh")
+                    else:
+                        st.error(f"Error: {response.text}")
             except Exception as e:
                 st.error(f"Error processing request: {str(e)}")
                 st.info("Make sure the ML service is running and accessible.")
@@ -165,6 +169,25 @@ with st.sidebar:
     
     For longer videos, the transcription process may take several minutes.
     """)
+    
+    # Check if Ollama is running and showing available models
+    try:
+        ollama_response = requests.get(f"{os.environ.get('OLLAMA_API_URL', 'http://localhost:11434')}/api/tags", timeout=2)
+        if ollama_response.status_code == 200:
+            models_json = ollama_response.json()
+            available_models = [model["name"] for model in models_json.get("models", [])]
+            if available_models:
+                st.success("✅ Ollama is running")
+                st.markdown(f"**Model for summarization**: {os.environ.get('OLLAMA_MODEL', OLLAMA_MODEL)}")
+            else:
+                st.warning("⚠️ Ollama is running but no models are available")
+                st.markdown("Run `./scripts/setup-ollama-for-transcription.sh` to configure a model")
+        else:
+            st.warning("⚠️ Ollama service is not responding properly")
+    except:
+        st.warning("⚠️ Ollama service not detected")
+        st.markdown("Summarization will not work without Ollama")
+        st.markdown("Run `./scripts/start-ollama-wsl.sh` to start Ollama")
     
     st.header("Tips")
     st.markdown("""
