@@ -39,31 +39,41 @@ def transcribe_youtube():
     data = request.get_json(silent=True) or {}
     url = data.get("url")
     language = data.get("language")
+    whisper_model_size = data.get("whisper_model_size", "base")
     generate_summary = data.get("generate_summary", False)
     
     if not url:
         return jsonify({"error": "No URL provided"}), 400
     
+    # Validate URL format (simple check)
+    if not url.startswith("http"):
+        return jsonify({"error": "Invalid URL format. URL must start with http:// or https://"}), 400
+    
+    if "youtube.com" not in url and "youtu.be" not in url:
+        return jsonify({"error": "URL doesn't appear to be a YouTube link"}), 400
+    
     try:
-        # Set PATH to ensure ffmpeg is accessible
-        if '/usr/bin' not in os.environ.get('PATH', ''):
-            os.environ['PATH'] = f"/usr/bin:{os.environ.get('PATH', '')}"
-        
-        # Set explicit ffmpeg location and ensure it's properly passed
-        ffmpeg_location = '/usr/bin'
-        os.environ['FFMPEG_LOCATION'] = ffmpeg_location
-        
-        # Print debugging information
-        print(f"Using ffmpeg location: {ffmpeg_location}")
-        print(f"PATH: {os.environ.get('PATH')}")
-        
-        # Import here to avoid importing on startup if whisper is not installed
+        # Import YouTubeTranscriber - it will handle ffmpeg path detection and setup
         from ml.services.youtube_transcriber import YouTubeTranscriber
         
-        transcriber = YouTubeTranscriber(whisper_model_size="base")
-        print(f"Transcriber initialized with ffmpeg_location: {transcriber.ffmpeg_location}")
+        # Instead of managing ffmpeg here, create the transcriber first
+        # which will handle path detection internally
+        transcriber = YouTubeTranscriber(whisper_model_size=whisper_model_size)
+        ffmpeg_location = transcriber.ffmpeg_location
+        
+        # Log the ffmpeg location used
+        logger.info(f"Using ffmpeg from transcriber's detected location: {ffmpeg_location}")
+        
+        # Print debugging information
+        logger.info(f"Processing YouTube URL: {url}")
+        logger.info(f"Whisper model size: {whisper_model_size}")
+        logger.info(f"Environment PATH: {os.environ.get('PATH')}")
+        logger.info(f"Transcriber initialized with ffmpeg_location: {transcriber.ffmpeg_location}")
         
         result = transcriber.process_video(url, language, generate_summary=generate_summary)
+        
+        if not result.get("text"):
+            return jsonify({"error": "Transcription failed: No text was generated"}), 500
         
         response_data = {
             "text": result["text"],
@@ -75,9 +85,25 @@ def transcribe_youtube():
         if generate_summary and "summary" in result:
             response_data["summary"] = result["summary"]
         
+        # Include metadata about the process
+        response_data["metadata"] = {
+            "whisper_model": whisper_model_size,
+            "ffmpeg_location": ffmpeg_location,
+            "language": language,
+            "timestamp": result.get("timestamp", "")
+        }
+        
         return jsonify(response_data)
+    except FileNotFoundError as e:
+        logger.error(f"File not found error: {str(e)}")
+        return jsonify({"error": f"File not found: {str(e)}"}), 500
+    except RuntimeError as e:
+        logger.error(f"Runtime error: {str(e)}")
+        return jsonify({"error": f"Error processing video: {str(e)}"}), 500
     except Exception as e:
         logger.error(f"Error transcribing YouTube video: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
@@ -86,6 +112,12 @@ if __name__ == '__main__':
     logger.info(f"PYTHONPATH: {os.getenv('PYTHONPATH', 'Not set')}")
     logger.info(f"DEBUG: {os.getenv('DEBUG', 'Not set')}")
     logger.info(f"OLLAMA_API_URL: {os.getenv('OLLAMA_API_URL', 'Not set')}")
+    
+    # Parse command line arguments for port
+    import argparse
+    parser = argparse.ArgumentParser(description="Start the ML service")
+    parser.add_argument("--port", type=int, default=5000, help="Port to run the server on")
+    args = parser.parse_args()
     
     # Create necessary directories - use local paths for development environment
     if os.getenv("ENVIRONMENT") == "production":
@@ -105,5 +137,6 @@ if __name__ == '__main__':
     logger.info(f"VectorDB directory: {vector_db_path}")
     logger.info(f"Knowledge base directory: {knowledge_base_path}")
     logger.info(f"Temp directory: {temp_dir}")
+    logger.info(f"Starting server on port: {args.port}")
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=args.port, debug=True)

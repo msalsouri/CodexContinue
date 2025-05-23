@@ -1,0 +1,22 @@
+[Unit]
+Description=CodexContinue ML Service
+After=network.target
+
+[Service]
+User=<user>
+WorkingDirectory=/path/to/CodexContinue
+Environment="PYTHONPATH=/path/to/CodexContinue"
+Environment="FFMPEG_LOCATION=/usr/bin"
+ExecStart=/path/to/CodexContinue/scripts/start-transcription-service.sh
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+# Replace <user> and /path/to/CodexContinue with your actual username and path
+# Example:
+# User=ubuntu
+# WorkingDirectory=/home/ubuntu/CodexContinue
+# Environment="PYTHONPATH=/home/ubuntu/CodexContinue"
+# ExecStart=/home/ubuntu/CodexContinue/scripts/start-transcription-service.sh

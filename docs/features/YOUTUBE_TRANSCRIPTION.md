@@ -114,6 +114,8 @@ If you encounter issues:
 - Check the ML service logs for detailed error messages
 - Try with a shorter video if processing is taking too long
 - Use the CPU-only mode if GPU integration is causing issues
+- Run the validation script: `python3 scripts/validate-youtube-transcriber.py`
+- For comprehensive testing: `./scripts/run-transcription-tests.sh`
 
 ### FFmpeg Troubleshooting
 

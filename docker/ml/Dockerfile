@@ -13,6 +13,11 @@ RUN apt-get update && \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
+# Verify ffmpeg installation
+RUN ffmpeg -version && \
+    echo "FFmpeg installation verified" && \
+    which ffmpeg
+
 # Python setup
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
