@@ -1,0 +1,30 @@
+version: '3'
+
+# Override service configuration with full GPU support
+services:
+  # Override ml-service to use GPU-specific Dockerfile
+  ml-service:
+    build:
+      context: .
+      dockerfile: docker/ml/Dockerfile.gpu
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_API_URL=http://ollama:11434
+      - VECTOR_DB_PATH=/app/data/vectorstore
+      - KNOWLEDGE_BASE_PATH=/app/data/knowledge_base
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    volumes:
+      - ./ml:/app/ml
+      - vector-data:/app/data/vectorstore
+      - knowledge-data:/app/data/knowledge_base
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+  # Any services that previously used gunicorn should be modified to use direct Python execution
+  # This file will be used with docker-compose.yml as a base
