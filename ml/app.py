@@ -80,14 +80,23 @@ if __name__ == '__main__':
     logger.info(f"DEBUG: {os.getenv('DEBUG', 'Not set')}")
     logger.info(f"OLLAMA_API_URL: {os.getenv('OLLAMA_API_URL', 'Not set')}")
     
-    # Create necessary directories
-    vector_db_path = os.getenv("VECTOR_DB_PATH", "/app/data/vectorstore")
-    knowledge_base_path = os.getenv("KNOWLEDGE_BASE_PATH", "/app/data/knowledge_base")
+    # Create necessary directories - use local paths for development environment
+    if os.getenv("ENVIRONMENT") == "production":
+        base_dir = "/app"
+    else:
+        # For development, use local paths
+        base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    vector_db_path = os.getenv("VECTOR_DB_PATH", os.path.join(base_dir, "data/vectorstore"))
+    knowledge_base_path = os.getenv("KNOWLEDGE_BASE_PATH", os.path.join(base_dir, "data/knowledge_base"))
+    temp_dir = os.path.join(os.path.expanduser("~"), ".codexcontinue/temp")
     
     os.makedirs(vector_db_path, exist_ok=True)
     os.makedirs(knowledge_base_path, exist_ok=True)
+    os.makedirs(temp_dir, exist_ok=True)
     
     logger.info(f"VectorDB directory: {vector_db_path}")
     logger.info(f"Knowledge base directory: {knowledge_base_path}")
+    logger.info(f"Temp directory: {temp_dir}")
     
     app.run(host='0.0.0.0', port=5000, debug=True)

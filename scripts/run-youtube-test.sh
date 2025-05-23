@@ -47,10 +47,21 @@ sleep 2
 
 # Start the ML service in the background with explicit environment variables
 echo "Starting ML service..."
-PYTHONPATH=/home/msalsouri/Projects/CodexContinue \
-FFMPEG_LOCATION=/usr/bin \
-PATH=/usr/bin:$PATH \
-OLLAMA_MODEL="${OLLAMA_MODEL:-llama3}" \
+export PYTHONPATH=/home/msalsouri/Projects/CodexContinue
+export FFMPEG_LOCATION=/usr/bin
+export PATH=/usr/bin:$PATH
+export OLLAMA_MODEL="${OLLAMA_MODEL:-llama3}"
+
+# Verify ffmpeg is installed and accessible
+if ! command -v ffmpeg &> /dev/null; then
+    echo "ERROR: ffmpeg command not found. Please install ffmpeg."
+    echo "Try: sudo apt-get install -y ffmpeg"
+    exit 1
+else
+    echo "ffmpeg found at: $(which ffmpeg)"
+fi
+
+# Run with proper environment variables
 python3 ml/app.py > ml-service.log 2>&1 &
 ML_PID=$!
 
