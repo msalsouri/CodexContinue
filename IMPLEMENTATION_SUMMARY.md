@@ -97,3 +97,48 @@ To complete the implementation of the CodexContinue project, follow these steps:
 The project is well-architected and has all the necessary scaffolding. The implementation guide provides detailed code examples for all components. The next step is to follow the guide to implement the core functionality in each service, then test the integration end-to-end.
 
 By following the implementation guide and using the provided architecture, you should be able to complete a fully functional CodexContinue system with learning capabilities through Ollama integration.
+
+## YouTube Transcription Feature
+
+We have also implemented a YouTube transcription feature that allows users to transcribe YouTube videos to text and optionally summarize the content.
+
+### Feature Overview
+
+1. **Capabilities**:
+   - Transcribe YouTube videos using OpenAI's Whisper
+   - Summarize transcriptions using Ollama
+   - Multiple language support
+   - Various Whisper model size options (tiny, base, small, medium, large)
+   - Segment-by-segment transcript viewing
+
+2. **Components**:
+   - Backend transcription service (`ml/services/youtube_transcriber.py`)
+   - ML service API endpoint (`ml/app.py`)
+   - Streamlit frontend interface (`frontend/pages/youtube_transcriber.py`)
+
+3. **Technologies Used**:
+   - yt-dlp for YouTube video downloading
+   - ffmpeg for audio processing
+   - OpenAI Whisper for speech-to-text
+   - Ollama with LLaMA 3 for summarization
+   - Streamlit for the user interface
+
+### Running the Feature
+
+You can run the YouTube transcription feature independently from the rest of the system using:
+
+```bash
+./scripts/start-youtube-transcriber.sh
+```
+
+Or manually:
+
+```bash
+# Start the ML service
+cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
+
+# Start the Streamlit frontend
+cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
+```
+
+For more detailed information, refer to the implementation guide and the documentation in `docs/features/YOUTUBE_TRANSCRIPTION.md`.

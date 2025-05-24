@@ -49,6 +49,14 @@ This document provides the current status of the CodexContinue project, outlinin
    - `ML_IMPLEMENTATION.md`: ML model integration details
    - `CONTAINER_IMPLEMENTATION.md`: Technical implementation details
    - `DOMAIN_CUSTOMIZATION.md`: Guide for domain-specific customization
+   
+6. **YouTube Transcription Feature**
+   - Integration with OpenAI's Whisper for local transcription
+   - yt-dlp integration for YouTube video audio extraction
+   - ffmpeg configuration for audio processing
+   - Streamlit frontend for easy transcription tasks
+   - API endpoint for programmatic access
+   - Multi-language support and summarization capabilities
    - `OLLAMA_INTEGRATION.md`: Summary of Ollama implementation
 
 ## Directory Structure

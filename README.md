@@ -19,6 +19,8 @@ CodexContinue features built-in learning capabilities through:
    - Transcribe videos in multiple languages with automatic language detection
    - Generate summaries using Ollama models
    - Completely local processing for privacy and security
+   - Simple interface for quick transcription tasks
+   - High-quality transcripts using OpenAI's Whisper model (running locally)
 
 The system uses a custom CodexContinue model built on Llama3, specifically designed for software development tasks with:
 
@@ -89,10 +91,43 @@ See [Windows Quick Start](docs/WINDOWS_QUICKSTART.md) for setup instructions.
 cd CodexContinue
 
 # Start the development environment
-
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
 ```
+
+### Running the YouTube Transcription Feature
+
+You can run just the YouTube transcription feature without starting the entire CodexContinue environment:
+
+```bash
+# Start the YouTube transcription feature with a single script
+./scripts/start-youtube-transcriber.sh
+
+# Or manually start the components:
+# 1. Start the ML service
+cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
+
+# 2. Start the Streamlit frontend
+cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
+```
+
+This will start:
+- The ML service with YouTube transcription capabilities on port 5060
+- The Streamlit frontend interface on port 8501
+
+Access the interface at: http://localhost:8501
+
+For more information about the YouTube transcription feature, see [YouTube Transcription Documentation](docs/features/YOUTUBE_TRANSCRIPTION.md).
+# Start the YouTube Transcription Service
+./scripts/start-youtube-transcriber.sh
+
+# Access the UI at http://localhost:8501
+# API is available at http://localhost:5060/youtube/transcribe
+
+# Stop the service when done
+./scripts/stop-youtube-transcriber.sh
+```
+
+For more details, see [YouTube Transcription Documentation](docs/features/YOUTUBE_TRANSCRIPTION.md).
 
 ### Production Environment
 

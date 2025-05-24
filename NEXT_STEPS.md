@@ -82,4 +82,26 @@ If you encounter issues:
 - For Windows-specific issues, refer to [docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
 - For cross-platform workflow issues, see [docs/CROSS_PLATFORM_DEVELOPMENT.md](docs/CROSS_PLATFORM_DEVELOPMENT.md)
 
+## 8. Using the YouTube Transcription Feature
+
+The YouTube Transcription feature allows you to transcribe YouTube videos locally using OpenAI's Whisper model.
+
+1. Start the YouTube transcription services:
+
+   ```bash
+   ./scripts/start-youtube-transcriber.sh
+   ```
+
+2. Open your browser to http://localhost:8501
+
+3. Enter a YouTube URL, select language options, and click "Transcribe"
+
+4. When done, stop the services:
+
+   ```bash
+   ./scripts/stop-youtube-transcriber.sh
+   ```
+
+For more details, see [docs/features/YOUTUBE_TRANSCRIPTION.md](docs/features/YOUTUBE_TRANSCRIPTION.md).
+
 Enjoy developing CodexContinue across platforms!

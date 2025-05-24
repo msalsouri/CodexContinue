@@ -439,3 +439,114 @@ For ongoing development, follow this workflow:
 By following this guide, you'll have implemented the core functionality of the CodexContinue system. The containerized architecture provides a flexible and scalable platform for further development and customization.
 
 Refer to the documentation in the `docs/` directory for more detailed information about specific components.
+
+## 10. YouTube Transcription Feature
+
+The YouTube transcription feature allows users to transcribe YouTube videos to text and optionally summarize the content using Ollama.
+
+### 10.1. Components
+
+The feature consists of three main components:
+
+1. **Backend Service**:
+   - `ml/services/youtube_transcriber.py` - Core transcription logic
+   - Handles YouTube audio extraction, Whisper transcription, and Ollama summarization
+
+2. **API Endpoint**:
+   - Added to `ml/app.py`
+   - Exposes `/youtube/transcribe` endpoint for the ML service
+
+3. **Frontend UI**:
+   - `frontend/pages/youtube_transcriber.py` - Streamlit interface
+   - Provides user-friendly interaction for video transcription
+
+### 10.2. Implementation Steps
+
+1. **Install Dependencies**:
+```bash
+# Install ffmpeg if not already present
+sudo apt-get update && sudo apt-get install -y ffmpeg
+
+# Install Python dependencies
+pip install yt-dlp openai-whisper
+```
+
+2. **Implement YouTube Transcriber Service**:
+```python
+# ml/services/youtube_transcriber.py
+import os
+import yt_dlp
+import whisper
+
+class YouTubeTranscriber:
+    def __init__(self, whisper_model_size="base"):
+        self.whisper_model_size = whisper_model_size
+        self.model = None
+        self.ffmpeg_location = self._find_ffmpeg()
+        
+    def _find_ffmpeg(self):
+        # Logic to find ffmpeg installation
+        pass
+        
+    def process_video(self, url, language=None, generate_summary=False):
+        # Download audio, transcribe, and optionally summarize
+        pass
+```
+
+3. **Add API Endpoint to ML Service**:
+```python
+# ml/app.py
+@app.route('/youtube/transcribe', methods=["POST"])
+def transcribe_youtube():
+    data = request.get_json(silent=True) or {}
+    url = data.get("url")
+    language = data.get("language")
+    whisper_model_size = data.get("whisper_model_size", "base")
+    generate_summary = data.get("generate_summary", False)
+    
+    # Validate input and call YouTubeTranscriber
+    pass
+```
+
+4. **Create Streamlit Frontend**:
+```python
+# frontend/pages/youtube_transcriber.py
+import streamlit as st
+import requests
+
+# Configure page
+st.set_page_config(
+    page_title="YouTube Transcriber - CodexContinue",
+    page_icon="🎬",
+    layout="wide"
+)
+
+# Add form for YouTube URL input
+with st.form("youtube_form"):
+    # Form elements
+    pass
+    
+# Handle form submission and display results
+```
+
+### 10.3. Running the Feature
+
+1. **Start the ML Service**:
+```bash
+cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
+```
+
+2. **Start the Streamlit Frontend**:
+```bash
+cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
+```
+
+Alternatively, use the provided scripts:
+```bash
+./scripts/start-youtube-transcriber.sh
+```
+
+To stop the services:
+```bash
+./scripts/stop-youtube-transcriber.sh
+```
