@@ -4,6 +4,8 @@ YouTube Transcription Service for CodexContinue
 """
 
 import os
+import tempfile
+import subprocess
 from typing import Dict, Any, Optional
 import logging
 import yt_dlp

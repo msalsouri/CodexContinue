@@ -5,7 +5,7 @@ import time
 import os
 
 # Get API URLs from environment variables or use defaults
-ML_SERVICE_URL = os.environ.get("ML_SERVICE_URL", "http://localhost:5000")
+ML_SERVICE_URL = os.environ.get("ML_SERVICE_URL", "http://localhost:5060")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "codexcontinue")
 
 st.set_page_config(

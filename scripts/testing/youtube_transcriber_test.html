@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Transcriber Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input, select {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Transcriber Test</h1>
+    <p>This is a simple HTML page to test the YouTube transcriber API directly from the browser.</p>
+    
+    <div>
+        <label for="url">YouTube URL:</label>
+        <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=...">
+        
+        <label for="language">Language (optional):</label>
+        <select id="language">
+            <option value="">Auto-detect</option>
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Japanese">Japanese</option>
+        </select>
+        
+        <label for="model">Whisper Model:</label>
+        <select id="model">
+            <option value="tiny">tiny</option>
+            <option value="base" selected>base</option>
+            <option value="small">small</option>
+            <option value="medium">medium</option>
+            <option value="large">large</option>
+        </select>
+        
+        <button onclick="transcribe()">Transcribe</button>
+        <button onclick="transcribeAndSummarize()">Transcribe & Summarize</button>
+    </div>
+    
+    <div id="status"></div>
+    <pre id="result"></pre>
+    
+    <script>
+        const ML_SERVICE_URL = 'http://localhost:5060';
+        
+        async function callTranscribeAPI(url, language, model, summarize) {
+            document.getElementById('status').innerHTML = '<p>Transcribing... This may take a few minutes for longer videos.</p>';
+            document.getElementById('result').textContent = '';
+            
+            try {
+                const response = await fetch(`${ML_SERVICE_URL}/youtube/transcribe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        language: language || null,
+                        whisper_model_size: model,
+                        generate_summary: summarize
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('status').innerHTML = '<p style="color:green">✅ Transcription complete!</p>';
+                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                } else {
+                    document.getElementById('status').innerHTML = '<p style="color:red">❌ Error: ' + data.error + '</p>';
+                }
+            } catch (error) {
+                document.getElementById('status').innerHTML = '<p style="color:red">❌ Network error: ' + error.message + '</p>';
+            }
+        }
+        
+        function transcribe() {
+            const url = document.getElementById('url').value;
+            const language = document.getElementById('language').value;
+            const model = document.getElementById('model').value;
+            
+            if (!url) {
+                document.getElementById('status').innerHTML = '<p style="color:red">❌ Please enter a YouTube URL</p>';
+                return;
+            }
+            
+            callTranscribeAPI(url, language, model, false);
+        }
+        
+        function transcribeAndSummarize() {
+            const url = document.getElementById('url').value;
+            const language = document.getElementById('language').value;
+            const model = document.getElementById('model').value;
+            
+            if (!url) {
+                document.getElementById('status').innerHTML = '<p style="color:red">❌ Please enter a YouTube URL</p>';
+                return;
+            }
+            
+            callTranscribeAPI(url, language, model, true);
+        }
+    </script>
+</body>
+</html>
