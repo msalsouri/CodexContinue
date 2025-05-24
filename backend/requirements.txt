@@ -1,8 +1,8 @@
 # Backend dependencies
-fastapi>=0.100.0
-uvicorn>=0.22.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
-redis>=4.6.0
-httpx>=0.24.1
-sqlalchemy>=2.0.0
+fastapi
+uvicorn
+pydantic
+python-dotenv
+redis
+httpx
+sqlalchemy

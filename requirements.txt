@@ -1,14 +1,14 @@
 # Core dependencies
-fastapi>=0.100.0
-uvicorn>=0.22.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
-streamlit>=1.24.0
-redis>=4.6.0
-langchain>=0.0.200
+fastapi
+uvicorn
+pydantic
+python-dotenv
+streamlit
+redis
+langchain
 
 # Development dependencies
-black>=23.3.0
-flake8>=6.0.0
-pytest>=7.3.1
-pytest-cov>=4.1.0
+black
+flake8
+pytest
+pytest-cov
