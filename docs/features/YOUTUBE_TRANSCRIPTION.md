@@ -25,16 +25,20 @@ This script will:
 
 ## Usage
 
-1. Start the CodexContinue services:
+1. Start the ML service:
    ```bash
-   ./scripts/start-mcp-litellm.sh
+   cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
    ```
 
-2. Navigate to the YouTube Transcriber page in the Streamlit UI:
-   - Open your browser to `http://localhost:8501`
-   - Click on "YouTube Transcriber" in the sidebar
+2. Start the Streamlit frontend:
+   ```bash
+   cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
+   ```
 
-3. Enter a YouTube URL and configure options:
+3. Navigate to the YouTube Transcriber page in the Streamlit UI:
+   - Open your browser to the URL shown in the Streamlit output (typically `http://localhost:8501`)
+
+4. Enter a YouTube URL and configure options:
    - Select the language (optional, improves accuracy)
    - Choose a Whisper model size (larger models are more accurate but slower)
    - Click "Transcribe" to get just the transcript
@@ -49,32 +53,16 @@ This script will:
 
 ## Command Line Usage
 
-You can also test the feature from the command line:
+The command line test scripts have been cleaned up and organized into the `scripts/testing` directory. For testing the YouTube transcription feature from the command line, you can use:
 
 ```bash
-# Basic transcription
-python3 scripts/test-youtube-transcriber.py --url "https://www.youtube.com/watch?v=YourVideoID"
-
-# Transcription with summarization
-python3 scripts/test-youtube-transcriber.py --url "https://www.youtube.com/watch?v=YourVideoID" --summarize
+# Test the YouTube transcription API directly with curl
+curl -X POST http://localhost:5060/youtube/transcribe \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.youtube.com/watch?v=jNQXAC9IVRw", "language": "English", "whisper_model_size": "tiny"}'
 ```
 
-### Advanced Testing
-
-For more detailed testing and troubleshooting, we provide additional test scripts:
-
-```bash
-# Run the complete test suite (component test + end-to-end test)
-./scripts/run-youtube-test.sh
-
-# Test the transcriber directly without Flask
-python3 scripts/test-transcriber-direct.py
-
-# Comprehensive validation of ffmpeg integration and transcription
-python3 scripts/test-transcriber-full.py
-```
-
-These scripts include detailed logging and environment setup to ensure ffmpeg is properly configured.
+For more detailed testing, you can create custom test scripts in the `scripts/testing` directory.
 
 ## Technical Implementation
 
@@ -101,7 +89,9 @@ The feature supports the following environment variables:
 
 - `OLLAMA_API_URL`: URL for the Ollama API (default: `http://localhost:11434`)
 - `OLLAMA_MODEL`: Model to use for summarization (default: `codexcontinue`)
-- `ML_SERVICE_URL`: URL for the ML service API (default: `http://localhost:5000`)
+- `ML_SERVICE_URL`: URL for the ML service API (default: `http://localhost:5060`)
+- `FFMPEG_LOCATION`: Location of the ffmpeg binaries (default: `/usr/bin`)
+- `PYTHONPATH`: Python module search path (should include the project root for proper imports)
 
 ## Troubleshooting
 
@@ -109,13 +99,11 @@ If you encounter issues:
 
 - Ensure ffmpeg is properly installed: `ffmpeg -version`
 - Check if Whisper is installed: `pip show openai-whisper`
-- Verify the Ollama service is running: `curl http://localhost:11434/api/tags`
-- Run the setup script: `./scripts/setup-ollama-for-transcription.sh` to configure Ollama
-- Check the ML service logs for detailed error messages
+- Verify the ML service is running on port 5060: `curl http://localhost:5060/health`
+- Check that NumPy is compatible with Whisper (version 1.24.3 recommended): `pip show numpy`
+- Ensure the PYTHONPATH environment variable includes the project root
 - Try with a shorter video if processing is taking too long
-- Use the CPU-only mode if GPU integration is causing issues
-- Run the validation script: `python3 scripts/validate-youtube-transcriber.py`
-- For comprehensive testing: `./scripts/run-transcription-tests.sh`
+- Check the ML service logs for detailed error messages
 
 ### FFmpeg Troubleshooting
 

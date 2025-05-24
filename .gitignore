@@ -50,9 +50,7 @@ ollama-data/
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+ml-service-*.log
 
 # Data files
 *.parquet
@@ -63,19 +61,18 @@ yarn-error.log*
 *.sqlite3
 
 # Temporary files
-tmp/
-.DS_Store
-.idea/
-*.swp
-*.swo
 *.pid
 direct_test_result.json
-direct_test_transcript.txt
-end_to_end_test_result.json
-full_transcript_test.txt
-resource_usage_test.json
-summarization_test_result.json
-transcription_test_results.json
+*.tmp
+*.temp
+*_test_output.json
+*_test_result.json
+.ml_service.pid
+.streamlit.pid
+
+# Temporary directories
+.codexcontinue/temp/
+ytdlp-test/
 
 # Redis data
 redis-data/
