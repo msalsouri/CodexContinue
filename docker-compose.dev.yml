@@ -21,6 +21,8 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
+      - OLLAMA_API_URL=http://ollama:11434
+      - ML_SERVICE_URL=http://ml-service:5000
     command: ["streamlit", "run", "frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
   # ML service (development mode)
