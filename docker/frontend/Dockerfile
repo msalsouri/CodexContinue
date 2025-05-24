@@ -1,5 +1,5 @@
 # Base image for all frontend environments
-FROM python:3.12-slim AS base
+FROM python:3.10-slim as base
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN groupadd -g 1000 appuser && \
     useradd -u 1000 -g appuser -s /bin/bash -m appuser
 
 # Development stage
-FROM base AS development
+FROM base as development
 
 # Install development dependencies
 COPY requirements.txt ./
@@ -37,10 +37,10 @@ ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
 # Command to run the application in development mode
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableCORS=false", "--server.enableXsrfProtection=true"]
+CMD ["streamlit", "run", "frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.enableCORS=false", "--server.enableXsrfProtection=true"]
 
 # Production stage
-FROM base AS production
+FROM base as production
 
 # Copy and install production dependencies
 COPY requirements.txt ./
@@ -67,4 +67,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8501/healthz || exit 1
 
 # Command to run the application in production mode
-CMD ["streamlit", "run", "app.py"]
+CMD ["streamlit", "run", "frontend/app.py"]
