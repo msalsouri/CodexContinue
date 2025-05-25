@@ -10,148 +10,98 @@ The YouTube Transcription feature in CodexContinue combines:
 2. **OpenAI Whisper**: For high-quality speech-to-text transcription
 3. **Ollama**: For summarizing the transcribed content
 
+All processing happens locally on your machine, ensuring privacy and data security.
+
+## Technical Architecture
+
+The feature is implemented with these components:
+
+- **ML Service**: Flask API that handles transcription requests
+- **Frontend**: Streamlit UI for user interaction
+- **Storage**: Local caching of downloaded audio and transcriptions
+- **GPU Acceleration**: Optional GPU support for faster transcription
+
 ## Setup
 
-To set up the YouTube Transcription feature, run:
+The YouTube Transcription feature is included in the standard CodexContinue installation. To start the service:
 
 ```bash
-./scripts/setup-youtube-transcriber.sh
+# Start all services with Docker Compose
+docker compose up -d
 ```
 
-This script will:
-- Install ffmpeg if not already installed
-- Install required Python packages
-- Create necessary directories
+Or you can use the provided script:
+
+```bash
+./scripts/start-codexcontinue.sh
+```
+
+## Dependencies
+
+The feature requires:
+- **ffmpeg**: For audio processing
+- **yt-dlp**: For downloading YouTube videos
+- **openai-whisper**: For transcription
+- **Ollama**: For summarization (optional)
+
+These dependencies are automatically installed in the Docker containers.
 
 ## Usage
 
-1. Start the ML service:
-   ```bash
-   cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
-   ```
+1. Navigate to the YouTube Transcriber page in the Streamlit UI:
+   - Open your browser to `http://localhost:8501`
+   - Click on "YouTube Transcriber" in the sidebar
 
-2. Start the Streamlit frontend:
-   ```bash
-   cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
-   ```
-
-3. Navigate to the YouTube Transcriber page in the Streamlit UI:
-   - Open your browser to the URL shown in the Streamlit output (typically `http://localhost:8501`)
-
-4. Enter a YouTube URL and configure options:
+2. Enter a YouTube URL and configure options:
    - Select the language (optional, improves accuracy)
    - Choose a Whisper model size (larger models are more accurate but slower)
    - Click "Transcribe" to get just the transcript
    - Click "Transcribe & Summarize" to also get an AI-generated summary
 
-4. View the results in the tabbed interface:
+3. View the results in the tabbed interface:
    - **Video**: Watch the original YouTube video
    - **Transcript**: Read and download the full transcript
    - **Summary**: Read and download the AI-generated summary (if requested)
 
-5. Download the results as text files if needed
+## Advanced Features
 
-## Command Line Usage
+### Caching
 
-The command line test scripts have been cleaned up and organized into the `scripts/testing` directory. For testing the YouTube transcription feature from the command line, you can use:
+Downloaded videos and transcriptions are cached to avoid redundant processing:
+- Audio files are stored in `~/.codexcontinue/temp/youtube/`
+- Files older than 7 days are automatically cleaned up
 
-```bash
-# Test the YouTube transcription API directly with curl
-curl -X POST http://localhost:5060/youtube/transcribe \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.youtube.com/watch?v=jNQXAC9IVRw", "language": "English", "whisper_model_size": "tiny"}'
-```
+### GPU Acceleration
 
-For more detailed testing, you can create custom test scripts in the `scripts/testing` directory.
-
-## Technical Implementation
-
-The feature consists of three main components:
-
-1. **Backend Service**: A Python class that handles downloading and transcription
-   - Located at `ml/services/youtube_transcriber.py`
-   - Supports multiple Whisper model sizes (tiny, base, small, medium, large)
-   - Integrated with Ollama for summarization
-
-2. **API Endpoint**: A Flask endpoint for the ML service
-   - Added to `ml/app.py`
-   - Supports both transcription-only and transcription+summarization modes
-
-3. **Frontend UI**: A Streamlit page for user interaction
-   - Located at `frontend/pages/youtube_transcriber.py`
-   - Tabbed interface for better organization of content
-   - Support for different Whisper model sizes
-   - Enhanced with metadata and segment viewing
-
-## Environment Variables
-
-The feature supports the following environment variables:
-
-- `OLLAMA_API_URL`: URL for the Ollama API (default: `http://localhost:11434`)
-- `OLLAMA_MODEL`: Model to use for summarization (default: `codexcontinue`)
-- `ML_SERVICE_URL`: URL for the ML service API (default: `http://localhost:5060`)
-- `FFMPEG_LOCATION`: Location of the ffmpeg binaries (default: `/usr/bin`)
-- `PYTHONPATH`: Python module search path (should include the project root for proper imports)
+The system can use GPU acceleration for Whisper if available:
+- CUDA for NVIDIA GPUs 
+- MPS for Apple Silicon GPUs
 
 ## Troubleshooting
 
-If you encounter issues:
+If you encounter issues with the YouTube transcription feature:
 
-- Ensure ffmpeg is properly installed: `ffmpeg -version`
-- Check if Whisper is installed: `pip show openai-whisper`
-- Verify the ML service is running on port 5060: `curl http://localhost:5060/health`
-- Check that NumPy is compatible with Whisper (version 1.24.3 recommended): `pip show numpy`
-- Ensure the PYTHONPATH environment variable includes the project root
-- Try with a shorter video if processing is taking too long
-- Check the ML service logs for detailed error messages
-
-### FFmpeg Troubleshooting
-
-If you encounter errors related to ffmpeg not being found:
-
-1. Verify ffmpeg is installed:
+1. Check connectivity between services:
    ```bash
-   ffmpeg -version
-   which ffmpeg
+   ./scripts/diagnose-services.sh
    ```
 
-2. Run the comprehensive test script to validate ffmpeg integration:
+2. Verify environment variables in docker-compose.yml:
+   - `OLLAMA_API_URL` should be set to `http://ollama:11434`
+   - `ML_SERVICE_URL` should be set to `http://ml-service:5000`
+
+3. Check the logs for specific errors:
    ```bash
-   python3 scripts/test-transcriber-full.py
+   docker compose logs ml-service
+   docker compose logs frontend
    ```
 
-3. Common solutions:
-   - Install ffmpeg if missing: `sudo apt-get install -y ffmpeg`
-   - Set PATH and FFMPEG_LOCATION environment variables:
-     ```bash
-     export PATH=/usr/bin:$PATH
-     export FFMPEG_LOCATION=/usr/bin
-     ```
-   - For Docker environments, ensure ffmpeg is installed in the container
+4. For more details, see the [troubleshooting guide](../troubleshooting-guide.md).
 
-### Ollama Configuration
+## Future Enhancements
 
-For summarization to work, you need a working Ollama installation with at least one model.
-The system will automatically use an available model in this order of preference:
-1. `codexcontinue` (custom model optimized for CodexContinue)
-2. `llama3` 
-3. `llama2`
-4. `mistral`
-5. `codellama`
-6. Any other available model
-
-To configure Ollama and set up an appropriate model:
-```bash
-# Start Ollama if not already running
-./scripts/start-ollama-wsl.sh
-
-# Configure Ollama for transcription (automatic model selection)
-./scripts/setup-ollama-for-transcription.sh
-```
-
-## Limitations
-
-- Processing longer videos (>10 minutes) may take significant time
-- The quality of transcription depends on the audio clarity
-- Summarization works best with clear, structured content
-- The largest Whisper models require significant RAM and processing power
+Planned improvements include:
+- Batch processing of multiple YouTube videos
+- Custom summarization prompts
+- Saving transcriptions to knowledge base
+- Annotation and highlighting of transcriptions

@@ -8,19 +8,55 @@ import tempfile
 import subprocess
 from typing import Dict, Any, Optional
 import logging
-import yt_dlp
-import whisper
 import json
 import requests
+import glob
+import importlib.util
+import time
+from datetime import datetime, timedelta
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Check required dependencies
+def check_dependencies():
+    """Check if required dependencies are installed."""
+    missing_deps = []
+    
+    # Check for yt-dlp
+    if importlib.util.find_spec("yt_dlp") is None:
+        missing_deps.append("yt-dlp")
+    
+    # Check for whisper
+    if importlib.util.find_spec("whisper") is None:
+        missing_deps.append("openai-whisper")
+    
+    if missing_deps:
+        logger.error(f"Missing required dependencies: {', '.join(missing_deps)}")
+        logger.error("Please install missing dependencies with: pip install " + " ".join(missing_deps))
+        return False
+    
+    # Import dependencies only after checking they exist
+    return True
+
+# Only import dependencies if they're available
+if check_dependencies():
+    import yt_dlp
+    import whisper
+else:
+    logger.warning("Running with limited functionality due to missing dependencies")
+
 class YouTubeTranscriber:
-    def __init__(self, whisper_model_size: str = "base"):
-        """Initialize the YouTube transcriber with the specified Whisper model size."""
+    def __init__(self, whisper_model_size: str = "base", use_gpu: bool = False):
+        """Initialize the YouTube transcriber with the specified Whisper model size.
+        
+        Args:
+            whisper_model_size (str): Size of the Whisper model to use ('tiny', 'base', 'small', 'medium', 'large')
+            use_gpu (bool): Whether to use GPU for transcription if available
+        """
         self.whisper_model_size = whisper_model_size
+        self.use_gpu = use_gpu
         self.model = None  # Lazy load the model when needed
         
         # Create temp directory for downloaded files
@@ -64,6 +100,32 @@ class YouTubeTranscriber:
         
         # Update environment variables
         self._update_environment_paths()
+        
+        # Clean up old temporary files
+        self._cleanup_old_files()
+    
+    def _cleanup_old_files(self, max_age_days: int = 7):
+        """Clean up old temporary files that are older than max_age_days."""
+        try:
+            logger.info(f"Cleaning up temporary files older than {max_age_days} days")
+            now = datetime.now()
+            count = 0
+            
+            for file_path in glob.glob(os.path.join(self.temp_dir, "*")):
+                # Get file modification time
+                mtime = os.path.getmtime(file_path)
+                mod_time = datetime.fromtimestamp(mtime)
+                
+                # If file is older than max_age_days, delete it
+                if now - mod_time > timedelta(days=max_age_days):
+                    os.remove(file_path)
+                    count += 1
+                    logger.debug(f"Removed old file: {file_path}")
+            
+            if count > 0:
+                logger.info(f"Cleaned up {count} old temporary files")
+        except Exception as e:
+            logger.warning(f"Error cleaning up temporary files: {str(e)}")
     
     def _find_ffmpeg(self):
         """Find ffmpeg in standard locations or from environment variable."""
@@ -104,9 +166,23 @@ class YouTubeTranscriber:
         if self.model is None:
             logger.info(f"Loading Whisper model: {self.whisper_model_size}")
             try:
-                # Force CPU usage instead of GPU to avoid CUDA/NumPy errors
-                self.model = whisper.load_model(self.whisper_model_size, device="cpu")
-                logger.info("Whisper model loaded successfully on CPU")
+                # Determine device based on configuration and availability
+                device = "cpu"
+                if self.use_gpu:
+                    try:
+                        import torch
+                        if torch.cuda.is_available():
+                            device = "cuda"
+                            logger.info("CUDA is available, using GPU for transcription")
+                        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+                            device = "mps"
+                            logger.info("MPS is available, using Apple Silicon GPU for transcription")
+                    except ImportError:
+                        logger.warning("Could not import torch to check GPU availability, defaulting to CPU")
+                
+                logger.info(f"Loading Whisper model on device: {device}")
+                self.model = whisper.load_model(self.whisper_model_size, device=device)
+                logger.info(f"Whisper model loaded successfully on {device}")
             except Exception as e:
                 logger.error(f"Error loading model: {str(e)}")
                 raise
@@ -116,6 +192,10 @@ class YouTubeTranscriber:
         """Download audio from a YouTube video."""
         logger.info(f"Downloading audio from: {url}")
         
+        # Ensure yt-dlp is available
+        if 'yt_dlp' not in globals():
+            raise ImportError("yt-dlp is not installed. Please install it with: pip install yt-dlp")
+        
         # Create a unique filename based on the video ID
         video_id = url.split("v=")[1].split("&")[0] if "v=" in url else url.split("/")[-1]
         output_file = os.path.join(self.temp_dir, f"{video_id}")
@@ -123,6 +203,8 @@ class YouTubeTranscriber:
         
         if os.path.exists(output_file_mp3):
             logger.info(f"Audio file already exists: {output_file_mp3}")
+            # Update file access time to prevent early cleanup
+            os.utime(output_file_mp3, None)
             return output_file_mp3
         
         # Ensure ffmpeg is properly set in the environment
@@ -187,6 +269,10 @@ class YouTubeTranscriber:
     def transcribe(self, audio_file: str, language: Optional[str] = None) -> Dict[str, Any]:
         """Transcribe the audio file using Whisper."""
         logger.info(f"Transcribing audio file: {audio_file}")
+        
+        # Ensure whisper is available
+        if 'whisper' not in globals():
+            raise ImportError("whisper is not installed. Please install it with: pip install openai-whisper")
         
         # Load the model
         model = self._load_model()

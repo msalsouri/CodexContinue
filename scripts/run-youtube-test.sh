@@ -8,9 +8,43 @@ export PYTHONPATH=/home/msalsouri/Projects/CodexContinue
 export PATH=/usr/bin:$PATH
 export FFMPEG_LOCATION=/usr/bin
 
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Testing YouTube Transcription Feature${NC}"
+
+# Check for required dependencies
+echo -e "${YELLOW}Checking dependencies...${NC}"
+MISSING_DEPS=()
+
+# Check for yt-dlp
+if ! pip show yt-dlp &>/dev/null; then
+    MISSING_DEPS+=("yt-dlp")
+fi
+
+# Check for whisper
+if ! pip show openai-whisper &>/dev/null; then
+    MISSING_DEPS+=("openai-whisper")
+fi
+
+# Check for ffmpeg
+if ! which ffmpeg &>/dev/null; then
+    MISSING_DEPS+=("ffmpeg")
+fi
+
+if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
+    echo -e "${RED}Missing dependencies: ${MISSING_DEPS[*]}${NC}"
+    echo -e "${YELLOW}Installing missing dependencies...${NC}"
+    pip install ${MISSING_DEPS[*]}
+fi
+
 # Configure Ollama model - check for available models and set an appropriate one
 if curl -s http://localhost:11434/api/tags > /dev/null; then
-    echo "Checking available Ollama models..."
+    echo -e "${GREEN}Ollama service is running${NC}"
+    echo -e "${YELLOW}Checking available Ollama models...${NC}"
     MODELS_JSON=$(curl -s http://localhost:11434/api/tags)
     MODELS=$(echo "${MODELS_JSON}" | grep -o '"name":"[^"]*' | sed 's/"name":"//g')
     
@@ -28,12 +62,20 @@ if curl -s http://localhost:11434/api/tags > /dev/null; then
             # Use first available model
             export OLLAMA_MODEL=$(echo "${MODELS}" | head -n 1)
         fi
-        echo "Using Ollama model: ${OLLAMA_MODEL}"
+        echo -e "${GREEN}Using Ollama model: ${OLLAMA_MODEL}${NC}"
     else
-        echo "No Ollama models available. Summarization may fail."
+        echo -e "${RED}No Ollama models available. Summarization may fail.${NC}"
     fi
 else
-    echo "Ollama service not detected. Summarization will not work."
+    echo -e "${RED}Ollama service not detected. Summarization will not work.${NC}"
+fi
+
+# Clean up old temporary files
+TEMP_DIR="${HOME}/.codexcontinue/temp/youtube"
+if [ -d "${TEMP_DIR}" ]; then
+    echo -e "${YELLOW}Cleaning up old temporary files...${NC}"
+    find "${TEMP_DIR}" -type f -mtime +7 -delete
+    echo -e "${GREEN}Cleaned up temporary files older than 7 days${NC}"
 fi
 
 # Run standalone test first to verify components
