@@ -1,107 +1,96 @@
-# Next Steps to Complete Cross-Platform Setup
+# Planned Features for CodexContinue
 
-Your CodexContinue project is now ready for cross-platform development between macOS and Windows. Here are the next steps to complete the setup:
+This document outlines the planned features and enhancements for future development of CodexContinue.
 
-## 1. Create a Remote Git Repository
+## YouTube Transcriber Enhancements
 
-1. Go to [GitHub](https://github.com/) or another git hosting service
-2. Create a new repository named "CodexContinue"
-3. Do not initialize it with README, license, or .gitignore (we already have these)
+### 1. Batch YouTube Transcription
+- Process multiple YouTube videos simultaneously
+- Queue management for large transcription jobs
+- Progress tracking and notifications
+- Batch export options (JSON, CSV, TXT)
 
-## 2. Connect Your Local Repository to the Remote
+### 2. Enhanced Summarization Options
+- Multiple summary lengths (short, medium, detailed)
+- Topic-focused summaries (extract specific themes)
+- Format options (bullet points, narrative, key points)
+- Custom prompts for targeted summarization
 
-```bash
-# Run our helper script to connect to the remote repository
-cd /Users/msalsouri/Projects/CodexContinue
-./scripts/setup-git-remote.sh
-```
+### 3. Knowledge Base Integration
+- Save transcriptions directly to knowledge base
+- Automatic categorization of content
+- Searchable transcript repository
+- Integration with vector database for semantic search
 
-When prompted, enter the URL of your remote repository, for example:
+### 4. Transcription Annotation
+- Add notes and timestamps to transcriptions
+- Highlight important sections
+- Collaborative annotation capabilities
+- Export annotations with transcripts
 
-- `https://github.com/yourusername/CodexContinue.git` (HTTPS)
-- `git@github.com:yourusername/CodexContinue.git` (SSH)
+## ML Service Improvements
 
-## 3. Push Your Code to the Remote Repository
+### 1. Model Selection Interface
+- Easy switching between different Ollama models
+- Model performance comparison tools
+- Custom model configuration UI
+- Model card display with capabilities and limitations
 
-The script will guide you to push your code to the remote repository:
+### 2. Fine-tuning Capabilities
+- GUI for model fine-tuning on custom data
+- Parameter optimization tools
+- Training progress visualization
+- Model performance evaluation
 
-```bash
-git push -u origin main
-```
+### 3. Advanced RAG Implementation
+- Enhanced retrieval augmented generation
+- Multi-step reasoning with knowledge base
+- Source attribution and confidence scoring
+- Hybrid retrieval strategies
 
-## 4. On Your Windows System
+## User Experience Enhancements
 
-1. Clone the repository:
+### 1. Customizable UI
+- Theme selection and customization
+- Layout preferences
+- Keyboard shortcuts
+- Accessibility improvements
 
-   ```bash
-   git clone https://github.com/yourusername/CodexContinue.git
-   cd CodexContinue
-   ```
+### 2. Project Workspace
+- Save and organize multiple projects
+- Project templates
+- Collaboration features
+- Export and sharing options
 
-2. Choose your Windows setup option:
+### 3. Integration with Development Tools
+- VS Code extension
+- Git integration
+- CI/CD pipeline hooks
+- API for third-party tool integration
 
-   - **Windows Subsystem for Linux (WSL):** Follow [docs/WINDOWS_WSL_GUIDE.md](docs/WINDOWS_WSL_GUIDE.md) (Recommended for best GPU integration)
+## Infrastructure and Performance
 
-      ```bash
-      # Quick setup after cloning
-      ./scripts/wsl-quick-setup.sh
-      ```
+### 1. GPU Optimization
+- Better GPU resource allocation
+- Multi-GPU support
+- Performance profiling and optimization
+- Dynamic resource allocation
 
-   - **Native Windows with Docker Desktop:** Follow [docs/WINDOWS_QUICKSTART.md](docs/WINDOWS_QUICKSTART.md)
+### 2. Deployment Options
+- Kubernetes deployment templates
+- Cloud deployment guides (AWS, GCP, Azure)
+- Air-gapped deployment support
+- Enterprise authentication integration
 
-## 5. Development Workflow
+### 3. Monitoring and Observability
+- Enhanced logging and metrics
+- Performance dashboards
+- Usage analytics
+- Health checks and alerts
 
-1. Make changes on either platform
-2. Commit and push changes:
+## Cross-Platform Support
 
-   ```bash
-   git add .
-   git commit -m "Description of changes"
-   git push
-   ```
-
-3. On the other platform, pull the changes:
-
-   ```bash
-   git pull
-   ```
-
-## 6. Important Notes
-
-- The Ollama model will be built separately on each platform
-- macOS uses CPU-only mode for Ollama via `docker-compose.macos.yml`
-- Windows uses GPU acceleration via the standard Docker Compose setup
-- Docker volumes are platform-specific, so model weights will be stored separately on each system
-- Run `./scripts/check-platform.sh` to verify your environment configuration
-
-## 7. Troubleshooting
-
-If you encounter issues:
-
-- Check [docs/DEVCONTAINER_TROUBLESHOOTING.md](docs/DEVCONTAINER_TROUBLESHOOTING.md)
-- For Windows-specific issues, refer to [docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
-- For cross-platform workflow issues, see [docs/CROSS_PLATFORM_DEVELOPMENT.md](docs/CROSS_PLATFORM_DEVELOPMENT.md)
-
-## 8. Using the YouTube Transcription Feature
-
-The YouTube Transcription feature allows you to transcribe YouTube videos locally using OpenAI's Whisper model.
-
-1. Start the YouTube transcription services:
-
-   ```bash
-   ./scripts/start-youtube-transcriber.sh
-   ```
-
-2. Open your browser to http://localhost:8501
-
-3. Enter a YouTube URL, select language options, and click "Transcribe"
-
-4. When done, stop the services:
-
-   ```bash
-   ./scripts/stop-youtube-transcriber.sh
-   ```
-
-For more details, see [docs/features/YOUTUBE_TRANSCRIPTION.md](docs/features/YOUTUBE_TRANSCRIPTION.md).
-
-Enjoy developing CodexContinue across platforms!
+For instructions on setting up CodexContinue on different platforms, see:
+- [docs/setup/MACOS_SETUP.md](docs/setup/MACOS_SETUP.md)
+- [docs/setup/WINDOWS_SETUP.md](docs/setup/WINDOWS_SETUP.md)
+- [docs/setup/LINUX_SETUP.md](docs/setup/LINUX_SETUP.md)

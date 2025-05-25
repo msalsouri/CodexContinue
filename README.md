@@ -7,29 +7,29 @@
 
 A powerful, modular AI development assistant with memory and multi-model support. Built for professional developers who need a versatile AI assistant with local-first capabilities and enterprise-grade features.
 
-## 🧠 Learning Capabilities
+## 🧠 Key Features
 
-CodexContinue features built-in learning capabilities through:
+CodexContinue offers a range of powerful capabilities:
 
-1. **Custom Ollama Models**: Specialized models for software development tasks
-2. **Domain Adaptation**: Ability to customize the system for specific domains
-3. **Model Customization**: Flexible model configuration via Modelfile
-4. **Knowledge Integration**: Easy integration of new knowledge and capabilities
-5. **YouTube Transcription**: Convert YouTube videos to text and summaries with local processing
+1. **YouTube Transcription**: Convert YouTube videos to text and summaries with local processing
    - Transcribe videos in multiple languages with automatic language detection
    - Generate summaries using Ollama models
    - Completely local processing for privacy and security
    - Simple interface for quick transcription tasks
    - High-quality transcripts using OpenAI's Whisper model (running locally)
 
-The system uses a custom CodexContinue model built on Llama3, specifically designed for software development tasks with:
+2. **Custom Ollama Models**: Specialized models for software development tasks
+   - Built on Llama3, optimized for code generation
+   - Technical problem-solving expertise
+   - Advanced reasoning for development workflows
 
-- Expanded code generation capabilities
-- Technical problem-solving expertise
-- Advanced reasoning for development workflows
-- Domain-specific knowledge (through customizable models)
+3. **Knowledge Integration**: Easy integration of new knowledge and capabilities
+   - Vector store for efficient knowledge retrieval
+   - Custom knowledge bases for domain-specific information
+   - Integration with external data sources
 
-See [DOMAIN_CUSTOMIZATION.md](docs/DOMAIN_CUSTOMIZATION.md) for information on adapting the system to specific domains.
+4. **Domain Adaptation**: Ability to customize the system for specific domains
+   - See [DOMAIN_CUSTOMIZATION.md](docs/DOMAIN_CUSTOMIZATION.md) for details
 
 ## 🏛️ Architecture
 
@@ -58,240 +58,34 @@ git clone https://github.com/yourusername/CodexContinue.git
 cd CodexContinue
 
 # Start the development environment
-./scripts/start-dev-environment.sh
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
-### Platform-Specific Instructions
+### Accessing the Application
 
-#### macOS
-
-For macOS, use the CPU-only configuration for Ollama:
-
-```bash
-./scripts/start-ollama-macos.sh
-```
-
-#### Windows (with WSL)
-
-For Windows with WSL (recommended):
-
-```bash
-# Quick setup
-./scripts/wsl-quick-setup.sh
-
-# Or start Ollama with GPU support
-./scripts/start-ollama-wsl.sh
-```
-
-See [Windows WSL Guide](docs/WINDOWS_WSL_GUIDE.md) for detailed instructions.
-
-#### Windows (native)
-
-See [Windows Quick Start](docs/WINDOWS_QUICKSTART.md) for setup instructions.
-cd CodexContinue
-
-# Start the development environment
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-```
-
-### Running the YouTube Transcription Feature
-
-You can run just the YouTube transcription feature without starting the entire CodexContinue environment:
-
-```bash
-# Start the YouTube transcription feature with a single script
-./scripts/start-youtube-transcriber.sh
-
-# Or manually start the components:
-# 1. Start the ML service
-cd /home/msalsouri/Projects/CodexContinue && PYTHONPATH=/home/msalsouri/Projects/CodexContinue FFMPEG_LOCATION=/usr/bin python3 ml/app.py --port 5060
-
-# 2. Start the Streamlit frontend
-cd /home/msalsouri/Projects/CodexContinue && ML_SERVICE_URL=http://localhost:5060 PYTHONPATH=/home/msalsouri/Projects/CodexContinue streamlit run frontend/pages/youtube_transcriber.py
-```
-
-This will start:
-- The ML service with YouTube transcription capabilities on port 5060
-- The Streamlit frontend interface on port 8501
-
-Access the interface at: http://localhost:8501
-
-For more information about the YouTube transcription feature, see [YouTube Transcription Documentation](docs/features/YOUTUBE_TRANSCRIPTION.md).
-# Start the YouTube Transcription Service
-./scripts/start-youtube-transcriber.sh
-
-# Access the UI at http://localhost:8501
-# API is available at http://localhost:5060/youtube/transcribe
-
-# Stop the service when done
-./scripts/stop-youtube-transcriber.sh
-```
-
-For more details, see [YouTube Transcription Documentation](docs/features/YOUTUBE_TRANSCRIPTION.md).
-
-### Production Environment
-
-```bash
-# Build production images
-./scripts/docker-build.sh prod build
-
-# Start the production environment
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-```
+- Frontend UI: http://localhost:8501
+- Backend API: http://localhost:8000/docs
+- ML Service API: http://localhost:5000/docs
 
 ## 🛠️ Development
 
-### Prerequisites
+For contribution guidelines, development workflow, and best practices, see:
 
-- Docker and Docker Compose
-- Python 3.10+
-- Git
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to the project
+- [DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) - Development workflow and processes
+- [troubleshooting-guide.md](docs/troubleshooting-guide.md) - Troubleshooting common issues
 
-### Project Structure
+## 📋 Planned Features
 
-```
-.
-├── app/            # Primary application code directory
-├── backend/        # Backend API service
-├── config/         # Configuration files
-├── docker/         # Docker configuration for all services
-├── docs/           # Documentation
-├── frontend/       # Frontend UI service
-├── ml/             # Machine learning service
-├── scripts/        # Utility scripts
-└── docker-compose.yml  # Base docker-compose configuration
-```
+The following features are planned for future development:
 
-### Setup a New Service
+1. **Batch YouTube Transcription**: Process multiple YouTube videos at once
+2. **Enhanced Summarization Options**: More control over summary generation
+3. **Knowledge Base Integration**: Save transcriptions to knowledge base
+4. **Transcription Annotation**: Add notes and annotations to transcriptions
 
-We provide a convenience script to set up a new service with the recommended structure:
-
-```bash
-# Create a basic service
-./scripts/setup-service.sh myservice
-
-# Create a FastAPI-based service
-./scripts/setup-service.sh myservice fastapi
-
-# Create an ML-focused service
-./scripts/setup-service.sh myservice ml
-```
-
-## 🧠 Domain-Specific Customization
-
-CodexContinue can be customized for different domains:
-
-### 🏥 Health Domain
-
-- Medical data processing
-- Healthcare-focused UI
-- Medical terminology integration
-
-### ⚖️ Legal Domain
-
-- Legal document processing
-- Case management
-- Legal research capabilities
-
-### 💰 Finance Domain
-
-- Financial data analysis
-- Market trend visualization
-- Investment planning tools
-
-### 👩‍💻 Developer Domain
-
-- Code generation and analysis
-- Project scaffolding
-- Documentation assistance
-
-## 📚 Documentation
-
-For more detailed documentation on each component:
-
-- [Backend API Documentation](docs/backend.md)
-- [Frontend UI Guide](docs/frontend.md)
-- [ML Service Documentation](docs/ml.md)
-- [Deployment Guide](docs/deployment.md)
-- [Developer Guide](docs/developer.md)
-
-## 🔧 Troubleshooting
-
-If you encounter issues while setting up or running CodexContinue:
-
-- [Shell Warnings Fix](docs/troubleshooting/SHELL_WARNINGS_FIX.md) - Solutions for common terminal warnings
-- [DevContainer Troubleshooting](docs/troubleshooting/DEVCONTAINER_TROUBLESHOOTING.md) - Fixing development container issues
-- [Docker Linux/WSL Troubleshooting](docs/troubleshooting/DOCKER_LINUX_WSL_TROUBLESHOOTING.md) - Solutions for Docker container issues in Linux/WSL
-- [WSL GPU Setup Guide](notebooks/nvidia_wsl_fix_guide.ipynb) - Detailed guide for NVIDIA GPU support in WSL
-
-### Testing Service Ports
-
-If you experience connectivity or port conflict issues, use our port testing script:
-
-```bash
-# Test if all CodexContinue service ports are working
-./scripts/test-codexcontinue-ports.sh
-```
-
-This script will check:
-- If the required ports (8000, 8501, 5000, 11434) are in use
-- If the services are responding to requests
-- If Ollama API is responding and models are available
-
-## 🤝 Contributing
-
-Contributions are welcome! Please check out our [Contributing Guide](CONTRIBUTING.md).
+For more information on upcoming features and development roadmap, see [NEXT_STEPS.md](NEXT_STEPS.md).
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
-
-## 🔄 Cross-Platform Development
-
-CodexContinue is designed to work across different platforms:
-
-### Windows with GPU Support
-
-For development on Windows with GPU capability:
-
-```bash
-# Start the full environment with GPU support
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
-```
-
-### macOS (CPU-only)
-
-For development on macOS without GPU capability:
-
-```bash
-# Start the Ollama service in CPU-only mode
-./scripts/start-ollama-macos.sh
-
-# Start the rest of the environment
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
-```
-
-### Git Repository Setup
-
-To move between platforms:
-
-1. Set up a remote Git repository:
-
-```bash
-./scripts/setup-git-remote.sh
-```
-
-2. Push your changes before switching platforms:
-
-```bash
-git add .
-git commit -m "Your commit message"
-git push
-```
-
-3. On the other platform, clone the repository:
-
-```bash
-git clone https://github.com/your-username/CodexContinue.git
-cd CodexContinue
-```
+This project is licensed under the MIT License - see the LICENSE file for details.

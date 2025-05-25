@@ -35,40 +35,44 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 The project follows a modular microservices architecture:
 
-- `app/`: Shared code and utilities
 - `backend/`: FastAPI backend service
 - `frontend/`: Streamlit frontend service
-- `ml/`: Machine learning service
+- `ml/`: Machine learning service with NLP capabilities
 - `docker/`: Docker configuration files
 - `scripts/`: Utility scripts
-- `config/`: Configuration files
 - `docs/`: Documentation
+- `data/`: Persistent data storage (knowledge base, vector store)
+- `notebooks/`: Jupyter notebooks for experimentation
 
 ## 🔄 Development Workflow
 
+We use a feature branch workflow. For detailed instructions, see [DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
+
 ### Branching Strategy
 
-- `main`: Stable release branch
-- `develop`: Development branch for integration
+- `main`: Stable, production-ready code
 - Feature branches: `feature/your-feature-name`
-- Bug fix branches: `bugfix/issue-description`
-- Release branches: `release/vX.Y.Z`
 
 ### Creating a New Feature
 
-1. Create a new branch from `develop`:
+1. Create a new branch from `main`:
 
 ```bash
-git checkout develop
+git checkout main
 git pull
 git checkout -b feature/your-feature-name
 ```
 
 2. Implement your changes, following the code style and conventions.
 
-3. Add tests for your changes.
+3. Run the diagnostic and cleanup scripts:
 
-4. Submit a pull request to the `develop` branch.
+```bash
+./scripts/diagnose-services.sh
+./scripts/cleanup-root-files.sh
+```
+
+4. Submit a pull request to the `main` branch.
 
 ### Pull Request Process
 
@@ -83,11 +87,11 @@ git checkout -b feature/your-feature-name
 ### Running Tests
 
 ```bash
-# Run tests for a specific service
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml run --rm backend pytest
+# Run tests for the ML service
+./scripts/run-transcription-tests.sh
 
-# Run tests with coverage
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml run --rm backend pytest --cov=app
+# Run specific test file
+docker compose exec ml-service python -m pytest tests/test_youtube_transcriber.py
 ```
 
 ### Testing Guidelines
@@ -95,7 +99,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml run --rm backend 
 - Write unit tests for all new functionality.
 - Aim for at least 80% code coverage.
 - Test edge cases and error scenarios.
-- Mock external dependencies.
+- Mock external dependencies when necessary.
 
 ## 📝 Code Style
 
@@ -104,16 +108,6 @@ This project follows PEP 8 for Python code style with the following tools:
 - **Black**: Code formatting
 - **Flake8**: Code linting
 - **isort**: Import sorting
-- **mypy**: Type checking
-
-### Pre-commit Hooks
-
-We use pre-commit hooks to ensure code quality. Install them with:
-
-```bash
-pip install pre-commit
-pre-commit install
-```
 
 ## 📚 Documentation
 
@@ -127,8 +121,8 @@ pre-commit install
 1. Create a release branch:
 
 ```bash
-git checkout develop
-git checkout -b release/vX.Y.Z
+git checkout main
+git checkout -b feature/release-vX.Y.Z
 ```
 
 2. Update version numbers and changelog.
@@ -144,16 +138,13 @@ git tag -a vX.Y.Z -m "Release vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
-## 🤝 Code of Conduct
+## ❓ Troubleshooting
 
-Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing to the project.
+If you encounter issues during development:
 
-## ❓ Questions and Support
-
-If you have questions or need support, please:
-
-1. Check the [documentation](docs/).
-2. Search for existing issues.
-3. Create a new issue if necessary.
+1. Check the [troubleshooting guide](docs/troubleshooting-guide.md).
+2. Run the diagnostic script: `./scripts/diagnose-services.sh`
+3. Search for existing issues in the GitHub repository.
+4. Create a new issue with detailed information if the problem persists.
 
 Thank you for contributing to CodexContinue!
